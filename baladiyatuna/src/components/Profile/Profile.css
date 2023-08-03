@@ -1,0 +1,13 @@
+.main-container {
+    margin-left: 20% !important;
+    margin-right: 20% !important;
+}
+
+.title {
+    color: var(--light-text-color, #1B1E28);
+    text-align: center !important;
+    font-size: 26px !important;
+    font-family: sans-serif !important;
+    font-weight: 900 !important;
+    line-height: 34px !important;
+}

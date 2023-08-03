@@ -1,0 +1,35 @@
+.main-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .table-container {
+      margin: 10px;
+    }
+  }
+
+  .title {
+    color: var(--light-text-color, #1B1E28);
+    text-align: center !important;
+    font-size: 26px !important;
+    font-family: sans-serif !important;
+    margin:5% !important;
+    width: 100%;
+    font-weight: 900 !important;
+    line-height: 34px !important;
+}
+
+.table-container {
+    width: 100%;
+    margin: 30px;
+}
+
+.avatar {
+
+    margin: 8px !important;
+    background-color: blue !important;
+}
+
+  
