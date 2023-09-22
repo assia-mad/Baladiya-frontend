@@ -29,6 +29,7 @@ import {
   import "./Login.css";
   import { setToken } from "../../config";
   import apiInstance from "../../../API";
+  import ErrorSnackbar from "../Tools/ErrorSnackBar";
   
   const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -91,12 +92,11 @@ import {
       <Container className="login-container">
         <CssBaseline />
         <Box className='main-box'>
-          <Snackbar open={isToastOpen} autoHideDuration={3000} onClose={handleToastClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-            <Alert onClose={handleToastClose} severity="error" sx={{ width: '100%' }}>
-              {errorMsg}
-            </Alert>
-          </Snackbar>
+          <ErrorSnackbar
+          open={isToastOpen}
+          onClose={handleToastClose}
+          errorMsg={errorMsg}
+          />
           <Avatar className="login-avatar">
             <LockOutlinedIcon />
           </Avatar>

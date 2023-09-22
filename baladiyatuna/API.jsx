@@ -14,7 +14,7 @@ apiInstance.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Token ${token}`;
     }
-    config.headers['Content-Type'] = 'application/json';
+    if (!config.headers['Content-Type']) config.headers['Content-Type'] = 'application/json';
     return config;
   },
   (error) => {

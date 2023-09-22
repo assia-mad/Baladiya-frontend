@@ -20,7 +20,7 @@ const StateCell = styled(TableCell)(({ state }) => ({
 }));
 
 const Topic = ({ topics, onEdit, onDelete, onValidate }) => {
-  const [selectedFormationId, setSelectedFormationId] = useState(null);
+  const [selectedTopicId, setSelectedTopicId] = useState(null);
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
@@ -29,18 +29,19 @@ const Topic = ({ topics, onEdit, onDelete, onValidate }) => {
   };
 
   const handleDelete = (id) => {
-    onDelete(id);
-    setSelectedFormationId(null);
+    console.log('theee id', selectedTopicId);
+    onDelete(selectedTopicId);
+    setSelectedTopicId(null);
     setOpen(false);
   };
 
   const handleClose = () => {
-    setSelectedFormationId(null);
+    setSelectedTopicId(null);
     setOpen(false);
   };
 
-  const handleClickDelete = (id) => {
-    setSelectedFormationId(id);
+  const handleClickDelete = (e, id) => {
+    setSelectedTopicId(id);
     setOpen(true);
   };
 
@@ -72,7 +73,7 @@ const Topic = ({ topics, onEdit, onDelete, onValidate }) => {
         <IconButton
           color="danger"
           aria-label="delete"
-          onClick={() => handleClickDelete(item.id)}
+          onClick={(e) => handleClickDelete(e,item.id)}
         >
           <DeleteIcon />
         </IconButton>
@@ -87,10 +88,13 @@ const Topic = ({ topics, onEdit, onDelete, onValidate }) => {
   ];
 
   return (
+    <>
     <TableComponent
       columns={columns}
       data={topics}
     />
+    <DeleteDialog open={open} onCancel={handleClose} onConfirm={handleDelete} />
+    </>
   );
 };
 

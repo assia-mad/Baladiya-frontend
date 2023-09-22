@@ -23,9 +23,9 @@ const StateMenuSelect = ({ currentState, onChangeState }) => {
         <ArrowDropDownIcon />
       </IconButton>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-        <MenuItem onClick={() => handleChangeState(t('en traitement'))}>{t('En traitement')}</MenuItem>
-        <MenuItem onClick={() => handleChangeState(t('validé'))}>{t('Validé')}</MenuItem>
-        <MenuItem onClick={() => handleChangeState(t('refusé'))}>{t('Refusé')}</MenuItem>
+        <MenuItem onClick={() => handleChangeState('en traitement')}>{t('En traitement')}</MenuItem>
+        <MenuItem onClick={() => handleChangeState('validé')}>{t('Validé')}</MenuItem>
+        <MenuItem onClick={() => handleChangeState('refusé')}>{t('Refusé')}</MenuItem>
       </Menu>
     </>
   );

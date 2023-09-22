@@ -3,17 +3,14 @@ import {Box,
         Grid,
         Typography,
         Avatar,
-        Select,
-        MenuItem,
-        TextField,
-        IconButton } from '@mui/material';   
-import { CheckCircle, FormatTextdirectionRToLOutlined, Search as SearchIcon } from '@mui/icons-material';
+      } from '@mui/material';   
+import { CheckCircle} from '@mui/icons-material';
 import PaginationItem from '../../../../Tools/Pagination';
 import Formation from './Formation';
 import apiInstance from '../../../../../../API';
 import Search from '../../../../Tools/Search';
 import Filtering from '../../../../Tools/Filtering';
-import DeleteDialog from '../../../../Tools/DeleteDialog';
+import NavigateButton from '../../../../Tools/NavigationButton';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -25,10 +22,10 @@ const Formations = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
-  const filterItemslist = [ {name:"Tous les formations", value:"Tous les formations"},
-                            {name:"En traitement", value:"en traitement"},
-                            {name:"Validé", value:"validé"},
-                            {name:"Refusé", value:"refusé"},
+  const filterItemslist = [ {name:t("Tous les formations"), value:"Tous les formations"},
+                            {name:t("En traitement"), value:"en traitement"},
+                            {name:t("Validé"), value:"validé"},
+                            {name:t("Refusé"), value:"refusé"},
                               ]
 
   useEffect( () =>{
@@ -40,7 +37,8 @@ const Formations = () => {
         const response = await apiInstance.get(`formations/`,{
           params: {
             page,
-            state : filter === 'Tous les formations' ? '' : filter,
+            state :filter === 'Tous les formations' ? '' : filter,
+            type:'Politique',
             search: searchText,
           },
         });
@@ -101,6 +99,9 @@ const Formations = () => {
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>
+              <Box mr={10}>
+                <NavigateButton page={'/formation'}/>
+              </Box>
             <Filtering filter={filter} onFilterChange={handleFilterChange} filteritems={filterItemslist}/>
             <Search setSearchText={setSearchText}  searchText={searchText} fetchData={fetchData}/>
           </Box>

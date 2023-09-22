@@ -16,6 +16,7 @@ import Filtering from '../../../Tools/Filtering';
 import DeleteDialog from '../../../Tools/DeleteDialog';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import NavigateButton from '../../../Tools/NavigationButton';
 
 const Topics = () => {
   const { t } = useTranslation();
@@ -25,10 +26,10 @@ const Topics = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
-  const filterItemslist = [ {name:"Tous les topics", value:"Tous les topics"},
-                            {name:"En traitement", value:"en traitement"},
-                            {name:"Validé", value:"validé"},
-                            {name:"Refusé", value:"refusé"},
+  const filterItemslist = [ {name:t("Tous les topics"), value:"Tous les topics"},
+                            {name:t("En traitement"), value:"en traitement"},
+                            {name:t("Validé"), value:"validé"},
+                            {name:t("Refusé"), value:"refusé"},
                               ]
 
   useEffect( () =>{
@@ -41,6 +42,7 @@ const Topics = () => {
           params: {
             page,
             state : filter === 'Tous les topics' ? '' : filter,
+            type : 'Sportif',
             search: searchText,
           },
         });
@@ -67,6 +69,7 @@ const Topics = () => {
       const response = await apiInstance.delete(`topics/${topicId}/`);
       fetchData();
     }catch(error){
+      console.log("failed to deleeeeeeeeeeeeeeeeete")
       console.log('error');
     }
     
@@ -101,6 +104,9 @@ const Topics = () => {
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>
+            <Box mr={10}>
+              <NavigateButton page={'/topic'}/>
+            </Box>
             <Filtering filter={filter} onFilterChange={handleFilterChange} filteritems={filterItemslist}/>
             <Search setSearchText={setSearchText}  searchText={searchText} fetchData={fetchData}/>
           </Box>

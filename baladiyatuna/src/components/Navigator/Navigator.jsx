@@ -4,6 +4,7 @@ import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, useNavigate } from "react-router-dom";
 import { styled } from "@mui/system";
+import { useTranslation } from "react-i18next";
 import apiInstance from "../../../API";
 import './Navigator.css';
 
@@ -61,6 +62,7 @@ const StyledAppBar = styled(AppBar)({
     const storedApiEndpoint = sessionStorage.getItem('apiEndpoint');
     const token = sessionStorage.getItem('token');
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleMenuIconClick = () => {
       setDrawerOpen(true);

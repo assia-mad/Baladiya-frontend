@@ -301,8 +301,6 @@ const Profile = () => {
             {t(error)}
         </Typography>
       )}
-
-
         </Grid>
       </Grid>
     </Box>

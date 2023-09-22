@@ -10,10 +10,6 @@ import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import TableComponent from '../../../../Tools/TableComponent';
 
-const StyledImg = styled('img')({
-  width: '80px',
-  height: '80px',
-});
 const StateCell = styled(TableCell)(({ state }) => ({
   height: '80px',
   color: state === 'en traitement' ? 'blue' : state === 'validé' ? 'green' : 'red',
@@ -28,7 +24,7 @@ const Formation = ({ formations, onEdit, onDelete, onValidate }) => {
   };
 
   const handleDelete = (id) => {
-    onDelete(id);
+    onDelete(selectedFormationId);
     setSelectedFormationId(null);
     setOpen(false);
   };
@@ -38,7 +34,7 @@ const Formation = ({ formations, onEdit, onDelete, onValidate }) => {
     setOpen(false);
   };
 
-  const handleClickDelete = (id) => {
+  const handleClickDelete = (e,id) => {
     setSelectedFormationId(id);
     setOpen(true);
   };
@@ -72,7 +68,7 @@ const Formation = ({ formations, onEdit, onDelete, onValidate }) => {
         <IconButton
           color="danger"
           aria-label="delete"
-          onClick={() => handleClickDelete(item.id)}
+          onClick={(e) => handleClickDelete(e,item.id)}
         >
           <DeleteIcon />
         </IconButton>
@@ -87,10 +83,13 @@ const Formation = ({ formations, onEdit, onDelete, onValidate }) => {
   ];
 
   return (
+    <>
     <TableComponent
       columns={columns}
       data={formations}
     />
+    <DeleteDialog open={open} onCancel={handleClose} onConfirm={handleDelete} />
+    </>
   );
 };
 
