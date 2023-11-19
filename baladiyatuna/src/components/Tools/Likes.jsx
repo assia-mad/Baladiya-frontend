@@ -7,7 +7,7 @@ const StyledPaper = styled(Paper)({
   padding: '10px',
   marginBottom: '10px',
   marginTop:'20px',
-  maxWidth: '400px', 
+  maxWidth: '450px', 
   // margin: '0 auto', 
 });
 

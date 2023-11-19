@@ -12,7 +12,6 @@ const VisitCreate = () => {
     title: "",
     description: "",
     localisation: "",
-    commune: "",
   });
   const [imageFile, setImageFile] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -20,6 +19,10 @@ const VisitCreate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -55,7 +58,11 @@ const VisitCreate = () => {
     formData.append("title", visit.title);
     formData.append("description", visit.description);
     formData.append("localisation", visit.localisation);
-    formData.append("commune", visit.commune);
+    if (communeCode)  {
+      const parsedCommune = parseInt(communeCode, 10);
+      formData.append("commune", parsedCommune);
+      console.log('the comuuuuune sent to update',parsedCommune);
+    }
 
     if (imageFile) {
       formData.append("image", imageFile);
@@ -109,7 +116,15 @@ const VisitCreate = () => {
         handleCreate={handleCreate}
         handleImageUpload={handleImageUpload}
         modifiedVisit={visit}
+        selectedCommune={selectedCommune}
+        setSelectedCommune = {setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        selectedCommuneName={selectedCommuneName}
+        visitWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
+      
     </>
   );
 };

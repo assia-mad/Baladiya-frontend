@@ -1,3 +1,4 @@
+import { BrowserRouter as Router,Routes, Route, useLocation } from 'react-router-dom';
 import SignUp from './components/SignUp/SignUp';
 import Login from './components/Login/Login';
 import ForgetPassword from './components/ForgetPassword/ForgetPassword';
@@ -60,7 +61,14 @@ import AlbumPhoto from './components/BaladiyaAgent/VisitSpace/AlbumPhoto/AlbumPh
 import AlbumCreate from './components/BaladiyaAgent/VisitSpace/AlbumPhoto/AlbumCreate';
 import AlbumUpdate from './components/BaladiyaAgent/VisitSpace/AlbumPhoto/AlbumUpdate';
 import Chat from './components/Chat';
-import { BrowserRouter as Router,Routes, Route, useLocation } from 'react-router-dom';
+import Dangers from './components/BaladiyaAgent/DangerSpace/DangerList';
+import DangerCreate from './components/BaladiyaAgent/DangerSpace/DangerCreate';
+import DangerUpdate from './components/BaladiyaAgent/DangerSpace/DangerUpdate';
+import Studies from './components/BaladiyaAgent/Studies/Studies';
+import StudyCreate from './components/BaladiyaAgent/Studies/StudyCreate';
+import StudyUpdate from './components/BaladiyaAgent/Studies/StudyUpdate';
+
+
 
 
 const Routers = () => {
@@ -125,6 +133,12 @@ const Routers = () => {
     const AlbumsWithNavigation = WithNavigation(AlbumPhoto, false);
     const AlbumCreateWithNavigation = WithNavigation(AlbumCreate, false);
     const AlbumUpdateWithNavigation = WithNavigation(AlbumUpdate, false);
+    const DangersWithNavigation = WithNavigation(Dangers, false);
+    const DangerCreateWithNavigation = WithNavigation(DangerCreate, false);
+    const DangerUpdateWithNavigation = WithNavigation(DangerUpdate, false);
+    const StudiesWithNavigation = WithNavigation(Studies, false);
+    const StudyCreateWithNavigation = WithNavigation(StudyCreate, false);
+    const StudyUpdateWithNavigation = WithNavigation(StudyUpdate, false);
 
     
   return (
@@ -189,7 +203,13 @@ const Routers = () => {
           <Route path="/albums" element={<AlbumsWithNavigation/>} /> 
           <Route path="/album" element={<AlbumCreateWithNavigation/>} /> 
           <Route path="/albums/:id" element={<AlbumUpdateWithNavigation/>} />
-          <Route path='/chat'  element={<Chat/>} /> 
+          <Route path='/chat'  element={<Chat/>} />
+          <Route path="/dangers" element={<DangersWithNavigation/>} />
+          <Route path="/danger" element={<DangerCreateWithNavigation/>} />
+          <Route path="/dangers/:id" element={<DangerUpdateWithNavigation/>} />
+          <Route path="/studies" element={<StudiesWithNavigation/>} />
+          <Route path="/study" element={<StudyCreateWithNavigation/>} />
+          <Route path="/studies/:id" element={<StudyUpdateWithNavigation/>} />
         </Routes>
 
   );

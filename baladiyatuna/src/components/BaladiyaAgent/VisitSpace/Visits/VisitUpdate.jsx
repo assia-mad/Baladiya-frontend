@@ -5,6 +5,17 @@ import { useTranslation } from "react-i18next";
 import apiInstance from "../../../../../API";
 import SuccessSnackbar from "../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../Tools/ErrorSnackBar";
+import algeriaCities from "../../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 
 const VisitDetailsComponent = () => {
@@ -15,6 +26,10 @@ const VisitDetailsComponent = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -28,17 +43,24 @@ const VisitDetailsComponent = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchVisitData = async () => {
-      try {
-        const response = await apiInstance.get(`visits/${id}/`);
-        setModifiedVisit(response);
-        console.log('Response:', response);
-      } catch (error) {
-        console.log('Error:', error);
-      }
-    };
+  const fetchVisitData = async () => {
+    try {
+      const response = await apiInstance.get(`visits/${id}/`);
+      setModifiedVisit(response);
+      const communeID = response.commune
+      setSelectedCommune(communeID);
+      const communeName = getCommuneNameById(communeID);
+      setSelectedCommuneName(communeName);
+      const wilayaCode = getWilayaCodeByCommuneId(communeID);
+      setWilayaCode(wilayaCode);
+      console.log('Response:', response);
+      console.log("communeeeeeeeeeeeeeeeeeee code",communeID);
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchVisitData();
   }, [id]);
 
@@ -55,8 +77,12 @@ const VisitDetailsComponent = () => {
     formData.append("title", modifiedVisit.title);
     formData.append("description", modifiedVisit.description);
     formData.append("localisation", modifiedVisit.localisation);
-    formData.append("commune", modifiedVisit.commune);
-
+    console.log("before parsing", communeCode);
+    if (communeCode)  {
+      const parsedCommune = parseInt(communeCode, 10);
+      formData.append("commune", parsedCommune);
+      console.log('the comuuuuune sent to update',parsedCommune);
+    }
     if (imageFile) {
       formData.append("image", imageFile);
     }
@@ -123,6 +149,14 @@ const VisitDetailsComponent = () => {
         handleImageUpload={handleImageUpload}
         modifiedVisit={modifiedVisit}
         handleSwitchChange={handleSwitchChange}
+        imageFile={imageFile}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        selectedCommuneName={selectedCommuneName}
+        visitWilaya={wilayaCode}
+        setSelectedCommuneName={setSelectedCommuneName}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

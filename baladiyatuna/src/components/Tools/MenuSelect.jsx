@@ -3,7 +3,7 @@ import { Select, MenuItem, FormControl,InputLabel } from "@mui/material";
 
 const MenuSelect = ({ items, label, selectedCode, onChange }) => {
   return (
-    <FormControl fullWidth variant="outlined">
+    <FormControl  fullWidth variant="outlined">
       <InputLabel>{label}</InputLabel>
       <Select
         label={label}

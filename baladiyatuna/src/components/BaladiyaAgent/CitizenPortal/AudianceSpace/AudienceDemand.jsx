@@ -12,7 +12,7 @@ const StateCell = styled(TableCell)(({ state }) => ({
     color: state === 'en traitement' ? 'blue' : state === 'validé' ? 'green' : 'red',
   }));
 
-const AudienceDemand = ({ audienceDemands, onEdit, onDelete }) => {
+const AudienceDemand = ({ audienceDemands, onEdit, onDelete, onValidate }) => {
 
     const [selectedDemandId, setSelectedDemandId] = useState(null);
     const [open, setOpen] = useState(false);
@@ -36,6 +36,10 @@ const AudienceDemand = ({ audienceDemands, onEdit, onDelete }) => {
         setSelectedDemandId(id);
         setOpen(true);
     };
+
+    const handleSwitchChange = (id, newState) => {
+        onValidate(id, newState);
+      };
 
     const columns = [
         { label: 'ID', dataKey: 'id' },

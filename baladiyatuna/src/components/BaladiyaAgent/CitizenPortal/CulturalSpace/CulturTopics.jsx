@@ -68,9 +68,7 @@ const CulturTopics = () => {
     setFilter(newValue);
   };
 
-  const handleRoleFilterChange = (newValue) => {
-    setRoleFilter(newValue);
-  };
+
 
 
   const handleEdit = (topicId) => {
