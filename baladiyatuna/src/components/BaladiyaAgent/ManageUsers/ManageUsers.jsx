@@ -10,6 +10,7 @@ import Filtering from '../../Tools/Filtering';
 import UsersList from './UsersList';
 import PaginationItem from '../../Tools/Pagination';
 import apiInstance from '../../../../API';
+import PrimaryColorText from '../../Tools/Title';
 import './ManageUsers.css';
 
 
@@ -19,17 +20,23 @@ const ManageUSers = () => {
     const [isPending, setIsPending] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [filter, setFilter] = useState('Numéro Social');
+    const [filter, setFilter] = useState('Role');
+    const [ApprovedFilter, setApprovedFilter]=useState('Approuver');
     const [searchText, setSearchText] = useState('');
-    const filterItems = [{name:"Numéro Social", value:"Numéro Social"},
-                        {name:"Approver", value:true},
-                        {name:"Non approver", value:false}
+    const filterItems = [{name:t("Role"), value:"Role"},
+                        {name:t("Citoyen"), value:"Citoyen"},
+                        {name:t("Association"), value:"Association"},
+                        {name:t("Entrepreneur"), value:"Entrepreneur"},
                           ]
+    const ApprovedfilterItems = [{name:t("Approuver"), value:"Approuver"},
+    {name:t("Oui"), value:true},
+    {name:t("Non"), value:false},
+      ]
     
 
     useEffect(() => {
       fetchData();
-    }, [page,filter,searchText]);
+    }, [page,filter,ApprovedFilter,searchText]);
   
     const fetchData = async () => {
       console.log(searchText);
@@ -40,7 +47,8 @@ const ManageUSers = () => {
             {
               params: {
                 page,
-                social_approved: filter === 'Numéro Social' ? '' : filter,
+                role: filter === 'Role' ? '' : filter,
+                social_approved: ApprovedFilter === 'Approuver'? '' : ApprovedFilter,
                 search: searchText,
               },
             }
@@ -70,6 +78,7 @@ const ManageUSers = () => {
     const handlePageChange = (event, value) => {
         setPage(value);
     };
+  
     
     if (isPending) {
         return( <div>Loading...</div>)
@@ -80,13 +89,14 @@ const ManageUSers = () => {
         <Box m={3}>
             <Grid  container direction="column" alignItems="center" spacing={2}>
                 <Grid item marginTop={4}>
-                    <Typography className='title'>
+                    <PrimaryColorText className='title'>
                         {t('Gestion des Citoyens')}
-                    </Typography>
+                    </PrimaryColorText>
                 </Grid>
                 <Grid item>
           <Box display="flex" alignItems="center" mb={2}>
-            <Filtering filter={filter} setFilter={setFilter} filteritems={filterItems}/>
+            <Filtering filter={filter} onFilterChange={setFilter} filteritems={filterItems}/>
+            <Filtering filter={ApprovedFilter} onFilterChange={setApprovedFilter} filteritems={ApprovedfilterItems}/>
             <Search setSearchText={setSearchText}  searchText={searchText} fetchData={fetchData}/>
           </Box>
         </Grid>

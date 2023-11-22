@@ -1,11 +1,12 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Grid, Typography, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DateTimePicker from 'react-datetime-picker';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import ReusableButton from '../../Tools/SaveButton';
 import PrimaryColorText from '../../Tools/Title'
+import apiInstance from '../../../../API';
 
 const StudyDetails = ({
   mode,
@@ -15,7 +16,30 @@ const StudyDetails = ({
   modifiedStudy,
 }) => {
     const {t} = useTranslation();
-    const [date, setDate] = useState(mode === 'update' ? new Date(modifiedStudy.date) : new Date());
+    const [ownername, setOwnerName] = useState('');
+    const isValidDate = (dateString) => {
+      return !isNaN(Date.parse(dateString));
+    };   
+    const defaultDate = new Date();
+    const initialDate = isValidDate(modifiedStudy.date) ? new Date(modifiedStudy.date) : defaultDate;
+    const [date, setDate] = useState(initialDate);
+
+    const fetchOwnerName = async () => {
+      try {
+        const response = await apiInstance.get(`/manage_users/${modifiedStudy.owner}/`);
+        setOwnerName(response?.first_name + ' ' + response?.last_name);
+        console.log(response?.first_name + ' ' + response?.last_name);
+      } catch (error) {
+      console.log('Error fetching owner name', error);
+    }
+  };
+
+    {mode === "update" &&
+      useEffect(() => {
+        fetchOwnerName();
+      }, [modifiedStudy.owner]);
+    }
+
 
   return (
     <Box ml={45} mt={20} mr={45}>
@@ -29,9 +53,9 @@ const StudyDetails = ({
           <Grid item xs={12}>
             <TextField
               name='owner'
-              label='Owner'
+              label={t('Propriétaire')}
               fullWidth
-              value={modifiedStudy.owner}
+              value={ownername}
               disabled
             />
           </Grid>
@@ -40,7 +64,7 @@ const StudyDetails = ({
           <Grid item xs={12}>
             <TextField
               name='created_at'
-              label='Created At'
+              label={t('Date de création')}
               fullWidth
               value={modifiedStudy.created_at}
               disabled
@@ -50,7 +74,7 @@ const StudyDetails = ({
         <Grid item xs={12}>
           <TextField
             name='title'
-            label='Title'
+            label={t('Title')}
             fullWidth
             value={modifiedStudy.title}
             onChange={handleChange}
@@ -59,7 +83,7 @@ const StudyDetails = ({
         <Grid item xs={12}>
           <TextField
             name='description'
-            label='Description'
+            label={t('Description')}
             multiline
             fullWidth
             value={modifiedStudy.description}
@@ -73,7 +97,7 @@ const StudyDetails = ({
                 format="dd-MM-yyyy HH:mm"
               />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} justifyContent="center">
           <ReusableButton
             size='large' 
             label={mode === 'update' ? 'Update' : 'Create'}

@@ -35,18 +35,18 @@ function Chat() {
     };
   }, []);
 
-// useEffect(() => {
-//     // Retrieve the token from sessionStorage
-//     const token = sessionStorage.getItem('token');
+useEffect(() => {
+    // Retrieve the token from sessionStorage
+    const token = sessionStorage.getItem('token');
 
-//     // Create the WebSocket connection with the token as a query parameter
-//     const ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${token}`);
+    // Create the WebSocket connection with the token as a query parameter
+    const ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${token}`);
 
-//     // Make sure to close the WebSocket connection when the component unmounts
-//     return () => {
-//         ws.close();
-//     };
-// }, []);
+    // Make sure to close the WebSocket connection when the component unmounts
+    return () => {
+        ws.close();
+    };
+}, []);
 
 
 

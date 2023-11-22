@@ -11,6 +11,7 @@ const StudyUpdate = () => {
     owner: '',
     title: '',
     description: '',
+    created_at:'',
   });
 
   const [errorMsg, setErrorMsg] = useState('');

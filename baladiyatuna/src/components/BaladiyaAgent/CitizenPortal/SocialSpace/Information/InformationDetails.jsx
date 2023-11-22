@@ -4,6 +4,7 @@ import { useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import apiInstance from '../../../../../../API';
 import 'react-datetime-picker/dist/DateTimePicker.css';
+import PrimaryColorText from '../../../../Tools/Title';
 
 const InformationDetails = ({ mode, handleChange, handleUpdate, handleCreate, modifiedInformation }) => {
   const [ownerName, setOwnerName] = useState('');
@@ -29,11 +30,11 @@ const InformationDetails = ({ mode, handleChange, handleUpdate, handleCreate, mo
     <Box mt={10} ml={mode === 'update' ? 20 : 30} mr={mode === 'update' ? 20 : 30}>
       <Grid container alignItems="center" direction={isMobile ? 'column' : 'row'}>
         <Grid item xs={12}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Typography className="title">
+          <Grid container spacing={2} >
+            <Grid item xs={12} >
+              <PrimaryColorText className="title">
                 {t('Information Social')}
-              </Typography>
+              </PrimaryColorText>
             </Grid>
             {mode === 'update' && (
               <>

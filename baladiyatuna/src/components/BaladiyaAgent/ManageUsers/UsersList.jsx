@@ -6,19 +6,21 @@ import { Table,
     TableHead,
     TableRow,
     Switch} from '@mui/material';
+import { useTranslation } from "react-i18next";
 
 
 const UsersList = ({users,handleApproveChange}) => {
+    const { t } = useTranslation();
     return (  
         <TableContainer >
             <Table>
                 <TableHead >
                     <TableRow>
-                        <TableCell><b>ID</b></TableCell>
-                        <TableCell><b>Nom</b></TableCell>
-                        <TableCell><b>Prénom</b></TableCell>
-                        <TableCell><b>Numéro Social</b></TableCell>
-                        <TableCell><b>Approuver</b></TableCell>
+                        <TableCell><b>{t('ID')}</b></TableCell>
+                        <TableCell><b>{t('Nom')}</b></TableCell>
+                        <TableCell><b>{t('Prénom')}</b></TableCell>
+                        <TableCell><b>{t('Role')}</b></TableCell>
+                        <TableCell><b>{t('Approuver')}</b></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -27,7 +29,7 @@ const UsersList = ({users,handleApproveChange}) => {
                         <TableCell>{user.id}</TableCell>
                         <TableCell>{user.last_name}</TableCell>
                         <TableCell>{user.first_name}</TableCell>
-                        <TableCell>{user.social_number}</TableCell>
+                        <TableCell>{user.role}</TableCell>
                         <TableCell>
                         <Switch
                             checked={user.social_approved}

@@ -76,7 +76,7 @@ const LocalPatronats = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">{t('Discussion Politique')}</Typography>
+          <Typography className="title">{t('Patronat Local')}</Typography>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

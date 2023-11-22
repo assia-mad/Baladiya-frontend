@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Typography,  Avatar, CircularProgress} from '@mui/material';
 import { CheckCircle} from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import './ManageAgents.css'
 import Filtering from '../../Tools/Filtering';
 import Search from '../../Tools/Search';
@@ -8,7 +9,7 @@ import PaginationItem from '../../Tools/Pagination';
 import AgentsList from './AgentsList';
 import { API_URL } from '../../../config';
 import apiInstance from '../../../../API';
-import { useTranslation } from 'react-i18next';
+import PrimaryColorText from '../../Tools/Title';
 
 
 const ManageAgents = () => {
@@ -104,9 +105,9 @@ const ManageAgents = () => {
             <CheckCircle />
         </Avatar>
         <Grid item>
-        <Typography className='title'>
+        <PrimaryColorText className='title'>
                     {t ('Gestion des utilisateurs')}
-        </Typography>
+        </PrimaryColorText>
         </Grid>
         <Box display="flex" alignItems="center" mb={2}>
             <Filtering filter={accountStatusFilter} onFilterChange={setAccountStatusFilter} filteritems={AccountfilterItems}/>

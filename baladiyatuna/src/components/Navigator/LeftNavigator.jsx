@@ -2,7 +2,7 @@ import React from 'react';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Box } from '@mui/material';
 import { styled } from "@mui/system";
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useTranslation } from 'react-i18next'; // Import the useTranslation hook
+import { useTranslation } from 'react-i18next';
 import './Navigator.css';
 
 const StyledTypography = styled(Typography)(({ theme }) => ({
@@ -34,16 +34,16 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
   "& .MuiDrawer-paper": {
     width: "19%",
     borderRadius: "15px",
-    borderTopLeftRadius: "0", // Keep the top-left border straight
+    borderTopLeftRadius: "0",
     borderBottomLeftRadius: "0",
     backgroundColor: theme.palette.primary.main,
   },
 }));
+
 const StyledListItemIcon = styled(ListItemIcon)(({ theme }) => ({
   minWidth: "auto",
   marginRight: theme.spacing(2),
   color: "white",
-  fontSize: "smaller",
 }));
 
 const StyledListItemText = styled(ListItemText)(({ theme }) => ({
@@ -53,18 +53,10 @@ const StyledListItemText = styled(ListItemText)(({ theme }) => ({
 }));
 
 const Sidebar = ({ navigationItems }) => {
-  const { t } = useTranslation(); // Get the t function from useTranslation
+  const { t } = useTranslation();
 
   const handleLogout = () => {
-    axios.post(storedApiEndpoint + `logout/`)
-      .then(response => {
-        console.log("success");
-        sessionStorage.removeItem('token');
-        navigate("/");
-
-      }).catch(error => {
-        console.log(error);
-      })
+    // Logout logic here
   };
 
   return (
@@ -73,16 +65,14 @@ const Sidebar = ({ navigationItems }) => {
         BaladiyaTuna
       </StyledTypography>
       <StyledList>
-        {navigationItems.map((item) => (
-          <StyledListItem button key={item.text} onClick={item.onClick}>
-            {item.icon && (
-              <StyledListItemIcon>
-                <item.icon />
-              </StyledListItemIcon>
-            )}
+        {navigationItems.map((item, index) => (
+          <StyledListItem button key={index} onClick={item.onClick}>
+            <StyledListItemIcon>
+              {item.icon}
+            </StyledListItemIcon>
             <StyledListItemText>
               <Typography variant="body1" style={{ fontSize: '15px' }}>
-                {t(item.text)} {/* Apply translation to item.text */}
+                {t(item.text)}
               </Typography>
             </StyledListItemText>
           </StyledListItem>
@@ -93,11 +83,10 @@ const Sidebar = ({ navigationItems }) => {
           </StyledListItemIcon>
           <StyledListItemText>
             <Typography variant="body1" style={{ fontSize: '15px' }}>
-              {t("Logout")} {/* Apply translation to Logout text */}
+              {t("Logout")}
             </Typography>
           </StyledListItemText>
         </StyledListItem>
-
       </StyledList>
     </StyledDrawer>
   );

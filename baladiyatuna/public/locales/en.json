@@ -46,7 +46,7 @@
     "mot de passe": "password",
     "Mot de passe oublié?" : "forget password ?",
     "S'identifier" : "Login",
-    "Vous n'avez pas de compte": "don't have an account",
+    "Vous n'avez pas de compte ": "don't have an account ",
     "S'inscrire": "Register",
     "Logout": "Logout",
     "Gestion des utilisateurs": "Manage Users",
@@ -161,6 +161,19 @@
     "Toutes les études":"All studies",
     "Crée par Apc":"Created by Apc",
     "Crée par BEDS":"Created by BEDS",
-    "Etude":"Study"
+    "Etude":"Study",
+    "Date de création":"creation date",
+    "Non":"No",
+    "Approuver":"Approved",
+    "Activité":"Activity",
+    "Guide de Création":"Creation Guide",
+    "Création micro Entreprise":"Micro company Creation",
+    "Patronat Local":"Local Patronat",
+    "Espace Visiteur":"Guest Space",
+    "Gestion des utilisateur":"Manage users",
+    "Visite guidé":"Guided tour",
+    "Album Photo":"Album Photo",
+    "Historique":"History",
+    "Gestion des riques":"Risk Management"
 
 }

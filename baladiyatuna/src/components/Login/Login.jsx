@@ -30,6 +30,7 @@ import {
   import { setToken } from "../../config";
   import apiInstance from "../../../API";
   import ErrorSnackbar from "../Tools/ErrorSnackBar";
+  import PrimaryColorText from "../Tools/Title";
   
   const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -100,9 +101,9 @@ import {
           <Avatar className="login-avatar">
             <LockOutlinedIcon />
           </Avatar>
-          <Typography className='title'>
+          <PrimaryColorText className='title'>
             {t('Connectez vous maitenant')}
-          </Typography>
+          </PrimaryColorText>
           <Typography className="description">{t('Veuillez vous connectez pour continuer à utiliser notre application')}</Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }} >
             <Grid container spacing={2} fullWidth>
@@ -157,7 +158,7 @@ import {
                 sx={{ mt: 5, mb: 2 }}>{t("S'identifier")} 
               </Button>
               <Grid container className="same-line-center">
-                <Typography variant="body1">{t("Vous n'avez pas de compte")} 
+                <Typography variant="body1">{t("Vous n'avez pas de compte ")} 
                   <Link href="/" >{t("S'inscrire")}</Link> 
                 </Typography>
   

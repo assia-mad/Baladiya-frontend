@@ -1,19 +1,22 @@
-import React from "react";
-import LeftNavigatorList from "../../Navigator/LeftNAvigatorList";
+import React from 'react';
+import LeftNavigatorList from "../../Navigator/LeftNavigatorList";
+import BarChart from './BarChart';
 import './Home.css';
 
 const Home = () => {
-
-    return(
-        <div>
+  return (
+    <div className="home-container">
+      <div className="sidebar">
         <LeftNavigatorList/>
-        Home
-        Footer
-        <div className="main-content">
-          <p>This is another component with the fixed sidebar.</p>
-        </div>
       </div>
-    );
+      <div className="main-content">
+        <BarChart />
+      </div>
+      <div className="footer">
+        Footer
+      </div>
+    </div>
+  );
 }
 
 export default Home;
