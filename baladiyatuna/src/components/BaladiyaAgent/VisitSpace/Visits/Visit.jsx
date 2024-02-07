@@ -34,7 +34,6 @@ const Visit = ({ visits, onEdit, onDelete, onValidate }) => {
   };
 
   const handleClickDelete = (e, selectedVisitId) => {
-    console.log('theee id', selectedVisitId);
     setSelectedVisitId(selectedVisitId);
     setOpen(true);
   };
@@ -49,19 +48,25 @@ const Visit = ({ visits, onEdit, onDelete, onValidate }) => {
   };
 
   const columns = [
-    { label: 'ID', dataKey: 'id' },
-    { label: 'Image', render: (item) => (
+    { label: t('ID'), dataKey: 'id' },
+    { label: t('Image'), render: (item) => (
       item.image && (
         <StyledImg src={item.image} alt={t("image")} />
       )
     )},
-    { label: 'Titre', dataKey: 'title' },
-    { label: 'Description', dataKey: 'description' },
-    { label: 'Localisation', dataKey: 'localisation' },
-    { label: 'Etat', dataKey: 'state', render: (item) => (
+    { label: t('Titre'), dataKey: 'title' },
+    { label: t('Description'), dataKey: 'description' },
+    { label: t('Localisation'), dataKey: 'localisation' },
+    { label: t('Etat'), dataKey: 'state', render: (item) => (
       <StateCell state={item.state}>{item.state}</StateCell>
     )},
-    { label: 'Action', render: (item) => (
+    { label: t('Valider'), render: (item) => (
+      <StateMenuSelect
+        currentState={item.state}
+        onChangeState={(newState) => handleSwitchChange(item.id, newState)}
+      />
+    )},
+    { label: t('Action'), render: (item) => (
       <>
         <IconButton
           color="primary"
@@ -78,12 +83,6 @@ const Visit = ({ visits, onEdit, onDelete, onValidate }) => {
           <DeleteIcon />
         </IconButton>
       </>
-    )},
-    { label: 'Valider', render: (item) => (
-      <StateMenuSelect
-        currentState={item.state}
-        onChangeState={(newState) => handleSwitchChange(item.id, newState)}
-      />
     )},
   ];
 

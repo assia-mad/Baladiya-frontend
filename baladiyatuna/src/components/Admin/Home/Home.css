@@ -1,0 +1,28 @@
+.menu-icon {
+    color: white !important;
+}
+/* Home.css */
+.home-container {
+    display: flex;
+    min-height: 100vh; /* Full height of the viewport */
+  }
+  
+  .sidebar {
+    width: 200px; /* Adjust the width of the sidebar as needed */
+    background-color: #f0f0f0; /* Background color for the sidebar */
+    padding: 20px;
+    box-sizing: border-box;
+    height: 100vh; /* Full height */
+    overflow-y: auto; /* Scrollable if content is too long */
+
+  }
+  
+  .main-content {
+    flex-grow: 1; /* Takes up the remaining width */
+    padding: 20px;
+    background-color: #fff; /* Background color for the main content */
+    overflow-y: auto; /* Scrollable if content is too long */
+    margin-left: 100px; 
+  }
+  
+  

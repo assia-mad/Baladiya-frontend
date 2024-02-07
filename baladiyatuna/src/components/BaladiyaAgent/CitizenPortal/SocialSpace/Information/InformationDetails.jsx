@@ -80,7 +80,7 @@ const InformationDetails = ({ mode, handleChange, handleUpdate, handleCreate, mo
             <Grid item xs={12}>
               <Box mt={2}>
               <Button variant="contained" color="primary" onClick={mode === 'update' ? handleUpdate : handleCreate}>
-                  {mode === 'update' ? t('save') : t('Create')}
+                  {mode === 'update' ? t('Enregistrer') : t('Créer')}
                 </Button>
               </Box>
             </Grid>

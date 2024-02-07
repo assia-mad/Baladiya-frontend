@@ -1,37 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { Typography, Box, Container, CssBaseline, Avatar, Grid, TextField, Snackbar, Alert, Button, IconButton, InputAdornment } from "@mui/material";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useEffect, useState } from "react";
-import apiInstance from "../../../API";
 import { useNavigate } from 'react-router-dom';
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useTranslation } from 'react-i18next'; // Import useTranslation hook
+import { useTranslation } from 'react-i18next'; 
 import './PasswordChange.css';
+import apiInstance from "../../../API";
 
 const ChangePassword = () => {
+  const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isErrorToastOpen, setErrorToastOpen] = useState(false);
   const [isSuccessToastOpen, setSuccessToastOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [oldPasswordError, setOldPasswordError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [nonFieldError, setNonFieldError] = useState("");
   let navigate = useNavigate();
-  const { t } = useTranslation(); // Hook to access translations
-
+  const { t } = useTranslation(); 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setOldPasswordError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
+    setNonFieldError("");
 
     const data = {
+      old_password: oldPassword,
       new_password1: password,
       new_password2: confirmPassword
     };
+
     apiInstance.post(`password-change/`, data)
       .then(response => {
         console.log('success');
@@ -40,10 +47,14 @@ const ChangePassword = () => {
       .catch(error => {
         setErrorToastOpen(true);
         setErrorMsg(error);
-        console.log("erreeeeeeeeeeeeeeeeeur", error.response.data);
+        console.log("error", error.response.data);
 
         if (error.response) {
           const { data } = error.response;
+
+          if (data.old_password) {
+            setOldPasswordError(data.old_password);
+          }
 
           if (data.new_password1) {
             setPasswordError(data.new_password1);
@@ -96,13 +107,37 @@ const ChangePassword = () => {
           <Grid container spacing={2} fullWidth>
             <Grid item xs={12} >
               <TextField
+                autoComplete="old-password"
+                name="oldPassword"
+                required
+                fullWidth
+                id="oldPassword"
+                type={showPassword ? "text" : "password"}
+                label={t('Ancien mot de passe')}
+                onChange={(e) => setOldPassword(e.target.value)}
+                className="back-ground-gray"
+                error={!!oldPasswordError}
+                helperText={oldPasswordError}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePassword} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
                 autoComplete="password"
                 name="password"
                 required
                 fullWidth
                 id="password"
                 type={showPassword ? "text" : "password"}
-                label={t('password')}
+                label={t('Mot de passe')}
                 autoFocus
                 onChange={(e) => setPassword(e.target.value)}
                 className="back-ground-gray"

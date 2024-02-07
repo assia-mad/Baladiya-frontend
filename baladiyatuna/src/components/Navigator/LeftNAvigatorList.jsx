@@ -9,6 +9,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import WarningIcon from '@mui/icons-material/Warning';
+import BallotIcon from '@mui/icons-material/Ballot';
 
 const LeftNavigatorList = () => {
     const { t } = useTranslation();
@@ -47,7 +48,7 @@ const LeftNavigatorList = () => {
         onClick: (event) => handleMenuOpen(event, [
           { label: t('Visite guidé'), path: '/visits' },
           { label: t('Album Photo'), path: '/albums' },
-          { label: t('Historique'), path: '/albums' }
+          { label: t('Historique'), path: '/historiques' }
         ])
       },
       {
@@ -58,7 +59,16 @@ const LeftNavigatorList = () => {
       {
         text: t('Gestion des risques'),
         icon: <WarningIcon />,
-        onClick: () => navigate('/dangers')
+        onClick: (event) => handleMenuOpen(event, [
+          { label: t('Risques'), path: '/dangers' },
+          { label: t('Ecoute Social'), path: '/danger-discussions' },
+          { label: t('Gaz et Incendie'), path: '/emergencies' }
+        ])
+      },
+      {
+        text: t('Espace Etudes'),
+        icon: <BallotIcon />,
+        onClick: () => navigate('/studies')
       },
   ];
 

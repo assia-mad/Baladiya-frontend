@@ -1,118 +1,124 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Grid, Box, Button, FormControlLabel, Typography, } from '@mui/material';
-import AdapterDateFns from '@mui/lab/AdapterDateFns'; 
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {useMediaQuery} from '@mui/material';
+import { TextField, Grid, Box, Button, Typography } from '@mui/material';
+import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useTranslation } from 'react-i18next';
 import apiInstance from '../../../../../../API';
 import StateMenuSelect from '../../../../Tools/StateMenu';
-import DateTimePicker from 'react-datetime-picker';
-import 'react-datetime-picker/dist/DateTimePicker.css';
+import PrimaryColorText from '../../../../Tools/Title';
 
-const FormationDetails = ({mode, handleChange, handleSwitchChange, handleUpdate,handleCreate, modifiedFormation}) => {
-  const [ownerName, setOwnerName] = useState('');
+const FormationDetails = ({
+  mode,
+  handleChange,
+  handleSwitchChange,
+  handleCreate,
+  handleUpdate,
+  modifiedFormation,
+}) => {
   const { t } = useTranslation();
-  const [date, setDate] = useState(mode === 'update' ? new Date(modifiedFormation.date) : new Date());
-  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
-  
-  if (mode==="update"){
-  useEffect(() => {
-    const fetchOwnerName = async () => {
-      try {
-        const response = await apiInstance.get(`/manage_users/${modifiedFormation.owner}/`);
-        setOwnerName(response?.first_name + ' ' + response?.last_name);
-        console.log("theeeee owner",ownerName);
-      } catch (error) {
-        console.log('Error fetching owner name', error);
-      }
-    };
+  const [ownerName, setOwnerName] = useState('');
+  const [date, setDate] = useState(mode === 'update' && modifiedFormation.date ? new Date(modifiedFormation.date) : new Date());
 
-    fetchOwnerName();
-  }, [modifiedFormation.owner])};
+  useEffect(() => {
+    if (mode === 'update' && modifiedFormation.owner) {
+      fetchOwnerName();
+    }
+  }, [mode, modifiedFormation.owner]);
+
+  const fetchOwnerName = async () => {
+    try {
+      const response = await apiInstance.get(`/manage_users/${modifiedFormation.owner}/`);
+      setOwnerName(response?.first_name + ' ' + response?.last_name);
+    } catch (error) {
+      console.log('Error fetching owner name', error);
+    }
+  };
+
   return (
-    <Box mt={10} ml={mode=== "update" ? 20: 30} mr={mode=== "update" ? 20: 30}>
-      <Grid container  alignItems="center" direction={isMobile ? 'column' : 'row'}>
-        <Grid item xs={12}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Typography className='title'>
-              {t ('Formation Politique')}
-              </Typography>
-            </Grid>
-            { mode === "update" &&
-             <>
-            <Grid item xs={6}>
-              <TextField
-                  name="date"
-                  label="date"
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Box sx={{ mt:10, mx: 30 }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <PrimaryColorText className="title">{t('Formation')}</PrimaryColorText>
+          </Grid>
+          {mode === 'update' && (
+            <>
+              <Grid item xs={12} md={6}>
+                <TextField
                   fullWidth
-                  value={modifiedFormation.created_at}
-                  disabled
-                />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                  name="owner"
-                  label="owner"
-                  fullWidth
+                  label={t('Owner')}
                   value={ownerName}
                   disabled
                 />
-            </Grid>
-            </>
-            }
-            <Grid item xs={12}>
-              <TextField
-                name="title"
-                label="Title"
-                fullWidth
-                value={modifiedFormation.title}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                name="description"
-                label="Description"
-                multiline
-                fullWidth
-                value={modifiedFormation.description}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
+              </Grid>
+              <Grid item xs={12} md={6}>
                 <TextField
-                    name="localisation"
-                    label="localisation"
-                    multiline
-                    fullWidth
-                    value={modifiedFormation.localisation}
-                    onChange={handleChange}
+                  fullWidth
+                  label={t('Creation Date')}
+                  value={modifiedFormation.created_at}
+                  disabled
                 />
-            </Grid>
-            <Grid item xs={6}  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <DateTimePicker 
-                onChange={setDate}
-                value={date}
-                format="dd-MM-yyyy HH:mm"
+              </Grid>
+            </>
+          )}
+          <Grid item xs={12}>
+            <TextField
+              name="title"
+              label={t('Titre')}
+              fullWidth
+              value={modifiedFormation.title}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              name="description"
+              label={t('Description')}
+              multiline
+              rows={4}
+              fullWidth
+              value={modifiedFormation.description}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              name="localisation"
+              label={t('Localisation')}
+              fullWidth
+              value={modifiedFormation.localisation}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <DesktopDatePicker
+              label={t('Date')}
+              value={date}
+              onChange={(newDate) => setDate(newDate)}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </Grid>
+          {mode === 'update' && (
+            <Grid item xs={12}>
+              <StateMenuSelect
+                currentState={modifiedFormation.state}
+                onChangeState={(newState) => handleSwitchChange(modifiedFormation.id, newState)}
               />
             </Grid>
-            {mode === "update" &&            
-            <Grid item xs={12}>
-            <StateMenuSelect currentState={modifiedFormation.state} onChangeState={(newState) => handleSwitchChange(modifiedFormation.id, newState)} />
-            </Grid>
-            }
-            <Grid item xs={12}>
-              <Box mt={2}>
-                <Button variant="contained" color="primary" onClick={ () => {mode === "update" ? handleUpdate(date) : handleCreate(date)}}>
-                  {mode === 'update' ? t('save') : t('Créer')}
-                </Button>
-              </Box>
-            </Grid>
+          )}
+          <Grid item xs={12}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={() => mode === 'update' ? handleUpdate(date) : handleCreate(date)}
+            >
+              {mode === 'update' ? t('Modifier') : t('Créer')}
+            </Button>
           </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </LocalizationProvider>
   );
 };
 

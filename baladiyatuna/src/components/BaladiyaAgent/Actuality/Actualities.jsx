@@ -19,48 +19,78 @@ const Actualities = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const [userRole, setUserRole] = useState('')
   const filterItemslist = [ 
     {name:t("Tous les actualitées"), value:"Tous les actualitées"},
     {name:t("En traitement"), value:"en traitement"},
     {name:t("Validé"), value:"validé"},
     {name:t("Refusé"), value:"refusé"},
     ]
-  const typeFilterItemslist = [
-    {name:t("Tous les types"), value:"Tous les types"},
-    {name:t("Réalisation"), value:"Realisation"},
-    {name:t("Education"), value:"Education"},
-    {name:t("Entreprise"), value:"Entreprise"},
-    {name:t("Sport"), value:"Sport"},
-  ]
+    const typeFilterItemslist = [
+      { name: t("Tous les types"), value: "Tous les types" },
+      { name: t("Réalisation"), value: "Realisation" },
+      { name: t("Education"), value: "Education" },
+      { name: t("Entreprise"), value: "Entreprise" },
+      { name: t("Sport"), value: "Sport" },
+    ];
+    
+    const adminTypeFilterItemslist = [
+      { name: t("Tous les types"), value: "Tous les types" },
+      { name: t("Education"), value: "Education" },
+      { name: t("Entreprise"), value: "Entreprise" },
+    ];
 
 
-  useEffect(() => {
-    fetchData();
-  }, [typeFilter,filter, page, searchText]);
-
-  const fetchData = async () => {
-    try {
-      const response = await apiInstance.get(`actualities/`, {
-        params: {
-          page,
-          type: typeFilter === 'Tous les types' ? '' : typeFilter,
-          owner__role: filter === 'Tous les actualitées' ? '' : filter,
+    useEffect(() => {
+      fetchUserRole();
+    }, []);  
+    
+    useEffect(() => {
+      if (userRole) {
+        fetchData();
+      }
+    }, [typeFilter, filter, page, searchText, userRole]); 
+    
+    const fetchUserRole = async () => {
+      try {
+        const response = await apiInstance.get('user/');
+        setUserRole(response?.role);
+      } catch (error) {
+        console.log('Error fetching user role', error);
+      }
+    };
+    
+    const fetchData = async () => {
+      try {
+        const params = new URLSearchParams({
+          page: page,
+          state: filter === 'Tous les actualitées' ? '' : filter,
           search: searchText,
-        },
-      });
-      console.log(filter, "this is the filter");
-      setActualities(response?.results);
-      setTotalPages(response?.total_pages);
-      console.log("theeeeeeeee", response.results);
-    } catch (error) {
-      console.log("errooor", error);
-    }
-  };
+        });
+    
+        const endpoint = userRole === "Admin" ? 'admin_actualities/' : 'actualities/';
+    
+        if (userRole !== "Admin" || typeFilter !== 'Tous les types') {
+          params.append('type', typeFilter);
+        }
+
+        const response = await apiInstance.get(`${endpoint}?${params.toString()}`);
+        setActualities(response?.results);
+        setTotalPages(response?.total_pages);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    
+    
+    
+    
 
   const handleFilterChange = (newValue) => {
     setFilter(newValue);
   };
   const handleTypeFilterChange = (newValue) => {
+
     setTypeFilter(newValue);
   };
   const handleEdit = (actualityId) => {
@@ -79,6 +109,20 @@ const Actualities = () => {
   const handlePageChange = (event, value) => {
     setPage(value);
   };
+  const handleSwitchChange = async (id, newState) => {
+    try {
+      const state = newState;
+      const response = await apiInstance.patch(`actualities/${id}/`, { state });
+      setActualities((prevacts) =>
+        prevacts.map((actuality) =>
+          actuality.id === id ? { ...actuality, state } : actuality
+        )
+      );
+    } catch (error) {
+      console.log('error');
+    }
+  };
+  const isAdmin = userRole === "Admin";
 
   return (
     <Box m={3}>
@@ -96,7 +140,11 @@ const Actualities = () => {
             <Box mr={10}>
               <NavigateButton page={'/actuality'} />
             </Box>
-            <Filtering filter={typeFilter} onFilterChange={handleTypeFilterChange} filteritems={typeFilterItemslist} />
+            <Filtering
+            filter={typeFilter}
+            onFilterChange={handleTypeFilterChange}
+            filteritems={isAdmin ? adminTypeFilterItemslist : typeFilterItemslist}
+          />
             <Filtering filter={filter} onFilterChange={handleFilterChange} filteritems={filterItemslist} />
             <Search setSearchText={setSearchText} searchText={searchText} fetchData={fetchData} />
           </Box>
@@ -106,6 +154,7 @@ const Actualities = () => {
             actualities={actualities}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onValidate={handleSwitchChange}
           />
         </Grid>
         <Grid item>

@@ -23,7 +23,7 @@ const NavigateButton = ({ page }) => {
 
   return (
     <StyledButton variant="contained" onClick={handleButtonClick}>
-      {t('Create')}
+      {t('Créer')}
     </StyledButton>
   );
 };

@@ -20,7 +20,7 @@ const AgentsList = ({ users, handleDeactivate, handleChangeRole }) => {
           color="primary"
         />
         <Typography variant="body2" sx={{ marginLeft: '8px' }}>
-          {row.is_active ? 'Désactiver' : 'Activer'}
+          {row.is_active ? t('Désactiver') : t('Activer')}
         </Typography>
       </Box>
     )},

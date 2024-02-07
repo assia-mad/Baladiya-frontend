@@ -5,13 +5,13 @@ import AudienceDemandDetails from "./AudianceDemandDetails";
 import ErrorSnackbar from "../../../Tools/ErrorSnackBar";
 import SuccessSnackbar from "../../../Tools/SuccessSnackBar";
 
-
 const AudienceDemandCreate = () => {
   const [demand, setDemand] = useState({
-    title: "",
-    description: "",
     owner: null,
     person: "",
+    meet_type: 'Privé', 
+    public_meet_type: 'Autre',  
+    date: new Date() 
   });
   const [userId, setUserId] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
@@ -24,11 +24,8 @@ const AudienceDemandCreate = () => {
     if (reason === "clickaway") {
       return;
     }
-    if (isToastOpen) {
-      setToastOpen(false);
-    } else {
-      setSuccessOpen(false);
-    }
+    setToastOpen(false);
+    setSuccessOpen(false);
   };
 
   useEffect(() => {
@@ -38,7 +35,7 @@ const AudienceDemandCreate = () => {
   const getCurrentUserId = async () => {
     try {
       const response = await apiInstance.get(`user/`);
-      setUserId(response.id);
+      setUserId(response?.id);
     } catch (error) {
       console.log(error);
       setErrorMsg(t("Echec de trouver owner ID"));
@@ -56,11 +53,11 @@ const AudienceDemandCreate = () => {
 
   const handleCreate = async (selectedDate) => {
     const data = {
-      title: demand.title,
-      description: demand.description,
       owner: userId,
       date: selectedDate.toISOString().split('T')[0],
       person: demand.person,
+      meet_type: demand.meet_type,
+      public_meet_type: demand.public_meet_type,
     };
 
     try {
@@ -69,10 +66,12 @@ const AudienceDemandCreate = () => {
       setsuccessMsg(t("La creation a réussi!"));
       console.log("Response of create:", response);
       setDemand({
-        title: "",
-        description: "",
         owner: null,
         person: "",
+        meet_type: 'Privé',
+        public_meet_type: 'Autre',
+        state: 'en traitement',
+        date: new Date()
       });
     } catch (error) {
       setToastOpen(true);
@@ -94,6 +93,7 @@ const AudienceDemandCreate = () => {
         successMsg={successMsg}
       />
       <AudienceDemandDetails
+        mode="create"
         handleChange={handleChange}
         handleCreate={handleCreate}
         modifiedDemand={demand}

@@ -1,25 +1,26 @@
-import React, {useState} from 'react';
+import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import TranslateIcon from '@mui/icons-material/Translate';
-import { useTranslation } from 'react-i18next';
+import LanguageIcon from '@mui/icons-material/Language';
+import LanguageContext from './LanguageContext';
 
 const LanguageSelector = () => {
-  const { t } = useTranslation();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { changeLanguage } = useContext(LanguageContext);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleLanguageChange = (language) => {
+    changeLanguage(language);
     i18n.changeLanguage(language);
     setAnchorEl(null);
   };
 
   return (
     <>
-      <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-        <TranslateIcon />
+      <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} aria-label="Change Language" color="primary">
+        <LanguageIcon />
       </IconButton>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
         <MenuItem onClick={() => handleLanguageChange('en')}>{t('Anglais')}</MenuItem>
@@ -28,6 +29,6 @@ const LanguageSelector = () => {
       </Menu>
     </>
   );
-}
-export default LanguageSelector;
+};
 
+export default LanguageSelector;

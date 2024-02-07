@@ -1,192 +1,231 @@
+import React, { useState } from 'react';
 import {
-    Typography,
-    Box,
-    Container,
-    CssBaseline,
-    Avatar,
-    Grid,
-    TextField,
-    Link,
-    Button,
-    IconButton,
-    InputAdornment,
-    Snackbar,
-    Alert,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-  } from "@mui/material";
-  import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-  import FacebookIcon from '@mui/icons-material/Facebook';
-  import InstagramIcon from '@mui/icons-material/Instagram';
-  import TwitterIcon from '@mui/icons-material/Twitter';
-  import Visibility from "@mui/icons-material/Visibility";
-  import VisibilityOff from "@mui/icons-material/VisibilityOff";
-  import { useState, useEffect } from "react";
-  import { useNavigate } from 'react-router-dom';
-  import { useTranslation } from 'react-i18next'; 
-  import "./Login.css";
-  import { setToken } from "../../config";
-  import apiInstance from "../../../API";
-  import ErrorSnackbar from "../Tools/ErrorSnackBar";
-  import PrimaryColorText from "../Tools/Title";
-  
-  const Login = () => {
-    const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
-    const [isToastOpen, setToastOpen] = useState(false);
-    const [loggedIn, setLoggedIn] = useState(false);
-    const navigate = useNavigate();
-    const { t } = useTranslation(); 
-  
-    const handleTogglePassword = () => {
-      setShowPassword(!showPassword);
+  Container,
+  CssBaseline,
+  Avatar,
+  TextField,
+  Button,
+  Grid,
+  Link,
+  Paper,
+  Typography,
+  IconButton,
+  InputAdornment,
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import apiInstance from '../../../API'; 
+import { setToken } from "../../config";
+import ErrorSnackbar from '../Tools/ErrorSnackBar';
+import PrimaryColorText from '../Tools/Title';
+
+// Custom styling
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  marginTop: theme.spacing(8),
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: theme.spacing(2),
+}));
+const StyledContainer = styled(Container)({
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh', 
+  alignItems: 'center',
+  justifyContent: 'center', 
+});
+
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
+  margin: theme.spacing(1),
+  backgroundColor: theme.palette.secondary.main,
+}));
+
+const StyledForm = styled('form')({
+  width: '100%',
+  marginTop: '1rem',
+});
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  margin: theme.spacing(3, 0, 2),
+  padding: theme.spacing(1),
+  backgroundColor: theme.palette.primary.main,
+  '&:hover': {
+    backgroundColor: theme.palette.primary.dark,
+  },
+}));
+
+const Login = () => {
+  const { t } = useTranslation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isToastOpen, setToastOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [error, setError] = useState(''); 
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+  const navigate = useNavigate();
+ 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const loginData = {
+      email: email,
+      password: password
     };
-  
-    const handleToastClose = (event, reason) => {
-      if (reason === 'clickaway') {
-        return;
-      }
-      setToastOpen(false);
-    };
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      const loginData = {
-        email: email,
-        password: password
-      };
-      apiInstance.post(`login/`, loginData).then(response => {
-        console.log("success");
-        const token = response.key;
-        console.log('token is', token);
-        setToken(token);
-        setLoggedIn(true);
-        console.log(token);
-  
-        // Retrieve user data with social_approved field
-        apiInstance.get(`user/`).then(response => {
-          console.log(response);
+    apiInstance.post(`login/`, loginData).then(response => {
+      console.log("success");
+      const token = response.key;
+      console.log('token is', token);
+      setToken(token);
+      setLoggedIn(true);
+      console.log(token);
+
+      apiInstance.get(`user/`).then(response => {
+        console.log(response);
+        
+        if (response.role === "Admin") {
+          navigate('/admin-home');
+
+        } else if(response.role === "Agent")  {
+
           navigate('/home');
-          if (data.role === "Admin") {
-            //navigate to admin pannel
-  
-          } else {
-  
-            //navigate to baladiya agent home
-  
-          }
-        }).catch(error => {
-          console.log("error to get user data", error);
-        });
+
+        }
+        else {
+          const role = response.role;
+          setError(t('vous ne pouvez pas connecter'),role);
+          setOpenErrorSnackbar(true);
+        }
+    
+
       }).catch(error => {
-        setToastOpen(true);
-        console.log("erreeeeeeeeeeeeeeeeeur to login", error);
-        setErrorMsg(t('Erreur: requete echouée'));
+        console.log("error to get user data", error);
+        const errorMessage = error.response.data.detail || t('Une erreur s\'est produite lors de la récupération des données utilisateur');
+        setError(errorMessage); 
+        setOpenErrorSnackbar(true);
       });
-    };
-  
-    return (
-      <Container className="login-container">
-        <CssBaseline />
-        <Box className='main-box'>
-          <ErrorSnackbar
-          open={isToastOpen}
-          onClose={handleToastClose}
-          errorMsg={errorMsg}
+    }).catch(error => {
+      console.log("erreeeeeeeeeeeeeeeeeur to login", error);
+      console.error("error to login", error);
+      if (error.response) {
+        if (error.response.data.email) {
+          setEmailError(error.response.data.email.join(' '));
+        }
+        else if (error.response.data.password) {
+          setPasswordError(error.response.data.password.join(' '));
+        }
+        else if (error.response.data.non_field_errors[0]){
+          const errorMessage = error.response.data.non_field_errors[0] || t('Une erreur s\'est produite lors de la connexion.');
+          setError(errorMessage);
+          setOpenErrorSnackbar(true); 
+        }
+      else {
+        setError('Une erreur s\'est produite lors de la connexion');
+        setOpenErrorSnackbar(true);
+      }
+
+
+ 
+      }
+    });
+  };
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+  const handleCloseErrorSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenErrorSnackbar(false);
+  };
+
+
+  return (
+    <StyledContainer component="main">
+      <CssBaseline />
+      <StyledPaper elevation={6}>
+        <StyledAvatar>
+          <LockOutlinedIcon />
+        </StyledAvatar>
+        <PrimaryColorText className="title" variant="h5">
+          {t('Connectez-vous maintenant!')} 
+        </PrimaryColorText>
+        <StyledForm noValidate onSubmit={handleSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label={t('Email')} 
+            name="email"
+            autoComplete="email"
+            autoFocus
+            onChange={(e) => setEmail(e.target.value)}
+            error={!!emailError}
+            helperText={emailError}
           />
-          <Avatar className="login-avatar">
-            <LockOutlinedIcon />
-          </Avatar>
-          <PrimaryColorText className='title'>
-            {t('Connectez vous maitenant')}
-          </PrimaryColorText>
-          <Typography className="description">{t('Veuillez vous connectez pour continuer à utiliser notre application')}</Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }} >
-            <Grid container spacing={2} fullWidth>
-              <Grid item xs={12} >
-                <TextField
-                  autoComplete="email"
-                  name="email"
-                  required
-                  fullWidth
-                  id="email"
-                  label={t("email")}
-                  type="email"
-                  autoFocus
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="back-ground-gray"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  autoComplete="password"
-                  name="password"
-                  required
-                  fullWidth
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  label={t("password")}
-                  autoFocus
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="back-ground-gray"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={handleTogglePassword} edge="end">
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid container justifyContent="flex-end">
-                <Grid item>
-                  <Link href="/forget_password" variant="body2">
-                    {t("Mot de passe oublié?")} 
-                  </Link>
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 5, mb: 2 }}>{t("S'identifier")} 
-              </Button>
-              <Grid container className="same-line-center">
-                <Typography variant="body1">{t("Vous n'avez pas de compte ")} 
-                  <Link href="/" >{t("S'inscrire")}</Link> 
-                </Typography>
-  
-              </Grid>
-              <Grid container className="social-login">
-                <Grid item>
-                  <IconButton>
-                    <FacebookIcon />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label={t('Mot de passe')} 
+            type={showPassword ? 'text' : 'password'}
+            id="password"
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            error={!!passwordError}
+            helperText={passwordError}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={t('toggle password visibility')}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
-                </Grid>
-                <Grid item>
-                  <IconButton>
-                    <InstagramIcon />
-                  </IconButton>
-                </Grid>
-                <Grid item>
-                  <IconButton>
-                    <TwitterIcon />
-                  </IconButton>
-                </Grid>
-              </Grid>
-  
+                </InputAdornment>
+              ),
+            }}
+          />
+          <StyledButton
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+          >
+            {t('S\'identifier')} 
+          </StyledButton>
+          <Grid container justifyContent="space-between">
+            <Grid item>
+              <Link href="/forget_password" variant="body2">
+                {t('Mot de passe oublié?')}
+              </Link>
             </Grid>
-          </Box>
-        </Box>
-      </Container>
-    );
-  }
-  
-  export default Login;
-  
+            {/* <Grid item>
+              <Link href="#" variant="body2">
+                {t('Vous n\'avez pas de compte? S\'inscrire')}
+              </Link>
+            </Grid> */}
+          </Grid>
+        </StyledForm>
+      </StyledPaper>
+      <ErrorSnackbar
+        open={openErrorSnackbar}
+        onClose={handleCloseErrorSnackbar}
+        errorMsg={error}
+      />
+    </StyledContainer>
+  );
+};
+
+export default Login;

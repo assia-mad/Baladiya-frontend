@@ -9,7 +9,7 @@ const EcologicalInformationCreate = () => {
   const [ecologicalInformation, setEcologicalInformation] = useState({
     title: "",
     description: "",
-    type: "valorisation",
+    type: "",
     owner: null,
   });
   const [userId, setUserId] = useState(null);
@@ -55,15 +55,16 @@ const EcologicalInformationCreate = () => {
   };
 
   const handleCreate = async () => {
-    const formData  = new FormData();
-    formData.append('title',ecologicalInformation.title);
-    formData.append('description',ecologicalInformation.description);
-    formData.append('type',ecologicalInformation.type);
-    formData.append('owner',userId);
-    if (imageFile){
-        formData.append(imageFile)
+    const formData = new FormData();
+    formData.append('title', ecologicalInformation.title);
+    formData.append('description', ecologicalInformation.description);
+    formData.append('type', ecologicalInformation.type);
+    formData.append('owner', userId);
+    
+    if (imageFile) {
+      formData.append('image', imageFile);
+      console.log('imaage',imageFile);
     }
-
     try {
       const response = await apiInstance.post(
         `ecological_informations/`,
@@ -75,7 +76,7 @@ const EcologicalInformationCreate = () => {
       setEcologicalInformation({
         title: "",
         description: "",
-        type: "Valorisation",
+        type: "",
         owner: null,
       });
       setImageFile(null);
@@ -90,6 +91,7 @@ const EcologicalInformationCreate = () => {
     setImageFile(selectedFile);
     console.log('Selected file:', selectedFile);
   };
+  
   return (
     <>
       <ErrorSnackbar

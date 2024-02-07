@@ -27,17 +27,17 @@ const EcologicalInformationUpdate = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchEcologicalInformationData = async () => {
-      try {
-        const response = await apiInstance.get(`ecological_informations/${id}/`);
-        setModifiedEcologicalInformation(response);
-        console.log('Response:', response);
-      } catch (error) {
-        console.log('Error:', error);
-      }
-    };
+  const fetchEcologicalInformationData = async () => {
+    try {
+      const response = await apiInstance.get(`ecological_informations/${id}/`);
+      setModifiedEcologicalInformation(response);
+      console.log('Response:', response);
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchEcologicalInformationData();
   }, [id]);
 

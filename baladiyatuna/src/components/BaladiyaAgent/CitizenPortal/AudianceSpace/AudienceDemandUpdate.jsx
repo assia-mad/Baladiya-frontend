@@ -19,24 +19,24 @@ const AudienceDemandUpdate = () => {
     if (reason === 'clickaway') {
       return;
     }
-    if (isToastOpen) {
-      setToastOpen(false);
-    }
-    else { setSuccessOpen(false)}
+    setToastOpen(false);
+    setSuccessOpen(false);
   };
 
   useEffect(() => {
     const fetchDemandData = async () => {
       try {
         const response = await apiInstance.get(`audiance_demands/${id}/`);
-        setModifiedDemand(response); 
+        setModifiedDemand({ ...response, date: new Date(response?.date) }); 
       } catch (error) {
         console.log('Error fetching demand data', error);
+        setErrorMsg(t('Erreur de chargement des données'));
+        setToastOpen(true);
       }
     };
 
     fetchDemandData();
-  }, [id]);
+  }, [id, t]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,62 +48,65 @@ const AudienceDemandUpdate = () => {
 
   const handleSwitchChange = async (id, newState) => {
     try {
-      const state = newState;
-      const response = await apiInstance.patch(`audiance_demands/${id}/`, { state });
+      const response = await apiInstance.patch(`audiance_demands/${id}/`, { state: newState });
       setModifiedDemand((prevDemand) => ({
         ...prevDemand,
         state: response?.state,
       }));
+      setsuccessMsg(t('État modifié avec succès!'));
+      setSuccessOpen(true);
     } catch (error) {
       console.log('Error updating demand state', error);
+      setErrorMsg(t('Échec de la mise à jour de l\'état'));
+      setToastOpen(true);
     }
   };
 
   const handleUpdate = async (selectedDate) => {
     const data = {
-      title: modifiedDemand.title,
-      description: modifiedDemand.description,
       owner: modifiedDemand.owner,
-      date: selectedDate.toISOString().split('T')[0], 
+      date: selectedDate.toISOString().split('T')[0],
       person: modifiedDemand.person,
+      meet_type: modifiedDemand.meet_type,
+      public_meet_type: modifiedDemand.public_meet_type,
+      state: modifiedDemand.state
     };
-    
+
     try {
-      const response = await apiInstance.patch(`audiance_demands/${modifiedDemand.id}/`, data);
-      setModifiedDemand(response);
-      setsuccessMsg(t('demande modifiée avec succès!'));
+      const response = await apiInstance.patch(`audiance_demands/${id}/`, data);
+      setModifiedDemand({ ...response, date: new Date(response?.date) });
+      setsuccessMsg(t('La modification a réussi!'));
       setSuccessOpen(true);
-      console.log('Response after update:', response);
     } catch (error) {
       console.log('Error updating demand', error);
-      setErrorMsg(t('modification échouée'));
+      setErrorMsg(t('Modification échouée'));
       setToastOpen(true);
     }
   };
 
   if (!modifiedDemand) {
-    return <div>Loading...</div>;
+    return <div>{t('Chargement...')}</div>;
   }
 
   return (
     <>
-    <ErrorSnackbar
-    open={isToastOpen}
-    onClose={handleToastClose}
-    errorMsg={errorMsg}
-    />
-    <SuccessSnackbar
-    open={isSuccessOpen}
-    onClose={handleToastClose}
-    successMsg={successMsg}
-    />
-    <AudienceDemandDetails
-      mode="update"
-      handleChange={handleChange}
-      handleSwitchChange={handleSwitchChange}
-      handleUpdate={handleUpdate}
-      modifiedDemand={modifiedDemand}
-    />
+      <ErrorSnackbar
+        open={isToastOpen}
+        onClose={handleToastClose}
+        errorMsg={errorMsg}
+      />
+      <SuccessSnackbar
+        open={isSuccessOpen}
+        onClose={handleToastClose}
+        successMsg={successMsg}
+      />
+      <AudienceDemandDetails
+        mode="update"
+        handleChange={handleChange}
+        handleSwitchChange={handleSwitchChange}
+        handleUpdate={handleUpdate}
+        modifiedDemand={modifiedDemand}
+      />
     </>
   );
 };

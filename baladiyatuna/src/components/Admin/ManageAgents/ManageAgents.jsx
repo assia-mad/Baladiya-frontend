@@ -22,15 +22,15 @@ const ManageAgents = () => {
     const [accountStatusFilter, setAccountStatusFilter] = useState('Compte');
     const [searchText, setSearchText] = useState('');
     const RolefilterItems = [
-      {name:"Role", value:"Role"},
-      {name:"Admin", value:"Admin"},
-      {name:"Agent", value:"Agent"},
-      {name:"Citoyen", value:"Citoyen"}
+      {name:t("Role"), value:"Role"},
+      {name:t("Admin"), value:"Admin"},
+      {name:t("Agent"), value:"Agent"},
+      {name:t("Citoyen"), value:"Citoyen"}
       ];
     const AccountfilterItems = [
-      {name:"Compte", value:"Compte"},
-      {name:"Activer", value:true},
-      {name:"Désactiver", value:false},
+      {name:t("Compte"), value:"Compte"},
+      {name:t("Activer"), value:true},
+      {name:t("Désactiver"), value:false},
       ];
 
     useEffect(() => {

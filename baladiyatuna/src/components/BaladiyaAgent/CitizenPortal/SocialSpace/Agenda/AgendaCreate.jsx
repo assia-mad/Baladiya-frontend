@@ -62,7 +62,7 @@ const AgendaCreate = () => {
     formData.append('title', agenda.title);
     formData.append('description', agenda.description);
     formData.append('localisation',agenda.localisation);
-    formData.append('date',selectedDate.toISOString())
+    formData.append('date',selectedDate.toISOString());
    
     if (imageFile) {
       formData.append('image', imageFile);

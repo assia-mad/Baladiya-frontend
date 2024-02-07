@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import apiInstance from "../../../../../../API";
-import InformationDetails from "./InformationDetails"; // Update the import path
+import InformationDetails from "./InformationDetails";
 import { useParams } from "react-router-dom";
 import SuccessSnackbar from "../../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../../Tools/ErrorSnackBar";

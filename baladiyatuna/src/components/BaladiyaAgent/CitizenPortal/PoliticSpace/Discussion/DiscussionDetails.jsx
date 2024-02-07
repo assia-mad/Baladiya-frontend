@@ -6,8 +6,7 @@ import apiInstance from '../../../../../../API';
 import { useMediaQuery } from '@mui/material';
 import Comment from '../../../../Comments/Comment';
 
-
-const DiscussionDetails = ({ modifiedDiscussion, comments }) => {
+const DiscussionDetails = ({ modifiedDiscussion, comments, handleSwitchChange }) => {
   const { t } = useTranslation();
   const [ownerName, setOwnerName] = useState('');
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
@@ -26,46 +25,46 @@ const DiscussionDetails = ({ modifiedDiscussion, comments }) => {
   }, [modifiedDiscussion.owner]);
 
   return (
-<Paper elevation={3} style={{ padding: '20px', margin:'80px' }}>
+    <Paper elevation={3} style={{ padding: '20px', margin: '80px' }}>
       <Grid container spacing={2}>
         <Grid item xs={isMobile ? 12 : 5}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginTop: '10px' }}>
-            <img
-              src={modifiedDiscussion.image}
-              alt="discussion image"
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              marginTop: '10px',
+              height: '100%', 
+            }}
+          >
+            <div
               style={{
-                width: '70%', 
-                borderRadius: '8px',
-                objectFit: 'cover',
+                width: '100%', 
+                maxWidth: '400px', 
+                maxHeight: '400px', 
               }}
-            />
+            >
+              <img
+                src={modifiedDiscussion.image}
+                alt="discussion image"
+                style={{
+                  width: '100%', // Fixed width
+                  height: '100%', // Fixed height
+                  borderRadius: '8px',
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
           </div>
         </Grid>
         <Grid item xs={isMobile ? 12 : 7}>
           <Typography variant="h6" gutterBottom className='title'>
             {t('Discussion Politique')}
           </Typography>
-          <TextField
-            name="date"
-            label={t('date')}
-            fullWidth
-            value={modifiedDiscussion.created_at}
-            margin="normal"
-          />
-          <TextField
-            name="owner"
-            label={t('Propriétaire')}
-            fullWidth
-            value={ownerName}
-            margin="normal"
-          />
-          <TextField
-            name="title"
-            label={t('Titre')}
-            fullWidth
-            value={modifiedDiscussion.title}
-            margin="normal"
-          />
+          <TextField name="date" label={t('date')} fullWidth value={modifiedDiscussion.created_at} margin="normal" />
+          <TextField name="owner" label={t('Propriétaire')} fullWidth value={ownerName} margin="normal" />
+          <TextField name="title" label={t('Titre')} fullWidth value={modifiedDiscussion.title} margin="normal" />
           <TextField
             name="description"
             label={t('Description')}

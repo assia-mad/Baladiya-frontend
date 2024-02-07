@@ -65,7 +65,7 @@ const CreateTopic = () => {
         
         console.log(response);
         setSuccessOpen(true);
-        setsuccessMsg(t('Sport Topic créé avec succès'));
+        setsuccessMsg(t('La creation a réussi!'));
       } catch (error) {
         console.log(error);
         setErrorMsg(t('Création échouée'));

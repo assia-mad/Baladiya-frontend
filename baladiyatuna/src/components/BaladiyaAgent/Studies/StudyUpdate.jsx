@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 import StudyDetails from './StudyDetails';
 import apiInstance from '../../../../API';
 import SuccessSnackbar from '../../Tools/SuccessSnackBar';
@@ -8,7 +9,7 @@ import ErrorSnackbar from '../../Tools/ErrorSnackBar';
 const StudyUpdate = () => {
   const { id } = useParams();
   const [modifiedStudy, setModifiedStudy] = useState({
-    owner: '',
+    owner: null,
     title: '',
     description: '',
     created_at:'',
@@ -18,6 +19,7 @@ const StudyUpdate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -60,8 +62,12 @@ const StudyUpdate = () => {
       });
       console.log(response);
       setModifiedStudy(response);
+      setSuccessMsg(t('La modification a réussi!'));
+      setSuccessOpen(true);
     } catch (error) {
       console.log(error);
+      setErrorMsg(t('La modification a échoué'));
+      setToastOpen(true);
     }
   };
 

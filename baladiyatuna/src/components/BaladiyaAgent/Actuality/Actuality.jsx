@@ -21,7 +21,7 @@ const StateCell = styled(TableCell)(({ state }) => ({
   color: state === 'en traitement' ? 'blue' : state === 'validé' ? 'green' : 'red',
 }));
 
-const Actuality = ({ actualities, onEdit, onDelete }) => {
+const Actuality = ({ actualities, onEdit, onDelete, onValidate }) => {
   const [selectedActualityId, setSelectedActualityId] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -44,19 +44,20 @@ const Actuality = ({ actualities, onEdit, onDelete }) => {
     setSelectedActualityId(id);
     setOpen(true);
   };
+  const handleSwitchChange = (id, newState) => {
+    onValidate(id, newState);
+  };
 
   const renderFile = (item) => {
     if (item.file) {
       const fileExtension = item.file.split('.').pop().toLowerCase();
       if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png') {
-        // Render image
         return <StyledImg src={item.file} alt="Actuality Image" />;
       } else if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
-        // Render video
         return <StyledVideo controls><source src={item.file} type="video/mp4" /></StyledVideo>;
       }
     }
-    return null; // No file to render
+    return null;
   };
 
   const columns = [
@@ -71,6 +72,12 @@ const Actuality = ({ actualities, onEdit, onDelete }) => {
     { label: 'Type', dataKey: 'type' },
     { label: 'Etat', dataKey: 'state', render: (item) => (
         <StateCell state={item.state}>{item.state}</StateCell>
+      )},
+    { label: 'Valider', render: (item) => (
+        <StateMenuSelect
+          currentState={item.state}
+          onChangeState={(newState) => handleSwitchChange(item.id, newState)}
+        />
       )},
     {
       label: 'Action',

@@ -22,6 +22,7 @@ const StyledImg = styled('img')({
 const Agenda = ({ agendas, onEdit, onDelete, onValidate }) => {
   const [selectedAgendaId, setSelectedAgendaId] = useState(null);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleEdit = (id) => {
     onEdit(id);
@@ -48,24 +49,24 @@ const Agenda = ({ agendas, onEdit, onDelete, onValidate }) => {
   };
 
   const columns = [
-    { label: 'ID', dataKey: 'id' },
-    { label: 'Image', render: (item) => (
+    { label: t('ID'), dataKey: 'id' },
+    { label: t('Image'), render: (item) => (
         item.image && (
           <StyledImg src={item.image} alt="Topic Image" />
         )
       )},
-    { label: 'Titre', dataKey: 'title' },
-    { label: 'Description', dataKey: 'description' },
-    { label: 'Lieu et Date', render: (item) => (
+    { label: t('Titre'), dataKey: 'title' },
+    { label: t('Description'), dataKey: 'description' },
+    { label: t('Lieu et Date'), render: (item) => (
       <>
         <Typography>{item.date}</Typography>
         <Typography>{item.localisation}</Typography>
       </>
     )},
-    { label: 'Etat', dataKey: 'state', render: (item) => (
+    { label: t('Etat'), dataKey: 'state', render: (item) => (
       <StateCell state={item.state}>{item.state}</StateCell>
     )},
-    { label: 'Action', render: (item) => (
+    { label: t('Action'), render: (item) => (
       <>
         <IconButton
           color="primary"

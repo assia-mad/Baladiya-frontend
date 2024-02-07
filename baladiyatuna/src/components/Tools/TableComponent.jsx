@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import LanguageContext from './Languages/LanguageContext';
 import {
   Table,
   TableBody,
@@ -7,8 +8,6 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
 
@@ -16,26 +15,27 @@ const StyledTableCell = styled(TableCell)({
   height: '80px',
 });
 
-const TableComponent = ({ columns, data}) => {
+const TableComponent = ({ columns, data }) => {
+  const { direction } = useContext(LanguageContext);
   const { t } = useTranslation();
 
   return (
-    <TableContainer>
+    <TableContainer style={{ direction: direction }}>
       <Table>
         <TableHead>
           <TableRow>
             {columns.map((column, index) => (
-              <TableCell key={index}>
+              <StyledTableCell key={index}>
                 <b>{t(column.label)}</b>
-              </TableCell>
+              </StyledTableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((item) => (
-            <TableRow key={item.id}>
-              {columns.map((column, index) => (
-                <StyledTableCell key={index}>
+          {data.map((item, rowIndex) => (
+            <TableRow key={rowIndex}>
+              {columns.map((column, cellIndex) => (
+                <StyledTableCell key={cellIndex}>
                   {column.render ? column.render(item) : item[column.dataKey]}
                 </StyledTableCell>
               ))}

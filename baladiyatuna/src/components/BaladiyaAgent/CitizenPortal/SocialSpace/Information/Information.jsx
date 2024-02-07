@@ -5,11 +5,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
 import TableComponent from '../../../../Tools/TableComponent';
 import DeleteDialog from '../../../../Tools/DeleteDialog'; 
+import { useTranslation } from 'react-i18next';
 
 
 const Information = ({ informations, onEdit, onDelete }) => {
   const [selectedInformationId, setSelectedInformationId] = useState(null);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleEdit = (id) => {
     onEdit(id);
@@ -32,10 +34,10 @@ const Information = ({ informations, onEdit, onDelete }) => {
   };
 
   const columns = [
-    { label: 'ID', dataKey: 'id' },
-    { label: 'Titre', dataKey: 'title' },
-    { label: 'Description', dataKey: 'description' },
-    { label: 'Action', render: (item) => (
+    { label:t('ID'), dataKey: 'id' },
+    { label: t('Titre'), dataKey: 'title' },
+    { label: t('Description'), dataKey: 'description' },
+    { label: t('Action'), render: (item) => (
       <>
         <IconButton
           color="primary"

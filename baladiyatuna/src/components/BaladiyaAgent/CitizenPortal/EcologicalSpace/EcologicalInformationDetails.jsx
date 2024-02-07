@@ -33,18 +33,17 @@ const EcologicalInformationDetails = ({
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   if (mode === "update") {
+    const fetchOwnerName = async () => {
+      try {
+        const response = await apiInstance.get(
+          `/manage_users/${modifiedEcologicalInformation.owner}/`
+        );
+        setOwnerName(response?.first_name + " " + response?.last_name);
+      } catch (error) {
+        console.log("Error fetching owner name", error);
+      }
+    };
     useEffect(() => {
-      const fetchOwnerName = async () => {
-        try {
-          const response = await apiInstance.get(
-            `/manage_users/${modifiedEcologicalInformation.owner}/`
-          );
-          setOwnerName(response?.first_name + " " + response?.last_name);
-        } catch (error) {
-          console.log("Error fetching owner name", error);
-        }
-      };
-
       fetchOwnerName();
     }, [modifiedEcologicalInformation.owner]);
   }

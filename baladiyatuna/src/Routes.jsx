@@ -67,9 +67,30 @@ import DangerUpdate from './components/BaladiyaAgent/DangerSpace/DangerUpdate';
 import Studies from './components/BaladiyaAgent/Studies/Studies';
 import StudyCreate from './components/BaladiyaAgent/Studies/StudyCreate';
 import StudyUpdate from './components/BaladiyaAgent/Studies/StudyUpdate';
-
-
-
+import CreationSteps from './components/BaladiyaAgent/CitizenPortal/SocialSpace/CreationGuide/CreationSteps';
+import CreationStepCreate from './components/BaladiyaAgent/CitizenPortal/SocialSpace/CreationGuide/CreationStepCreate';
+import CreationStepUpdate from './components/BaladiyaAgent/CitizenPortal/SocialSpace/CreationGuide/CreationStepUpdate';
+import MicroEntrepriseCreationSteps from './components/BaladiyaAgent/CitizenPortal/EconomicSpace/MicroentrepriseCreation/MicroEntrepriseCreationSteps';
+import MicroEntrepriseCreationStepCreate from './components/BaladiyaAgent/CitizenPortal/EconomicSpace/MicroentrepriseCreation/MicroEntrepriseCreationStepCreate';
+import MicroEntrepriseCreationStepUpdate from './components/BaladiyaAgent/CitizenPortal/EconomicSpace/MicroentrepriseCreation/MicroEntrepriseCreationStepUpdate';
+import Historiques from './components/BaladiyaAgent/VisitSpace/Historique/Historiques';
+import HistoriqueCreate from './components/BaladiyaAgent/VisitSpace/Historique/HistoriqueCreate';
+import HistoriqueUpdate from './components/BaladiyaAgent/VisitSpace/Historique/HistoriqueUpdate';
+import AdminHome from './components/Admin/Home/Home';
+import AdminCitizenPortalData from './components/Admin/CitizenPortal/CitizenPortalData';
+import DangerDiscussions from './components/BaladiyaAgent/DangerSpace/EcouteSocial/DangerDiscussions';
+import DangerDiscussionUpdate from './components/BaladiyaAgent/DangerSpace/EcouteSocial/DangerDiscussionUpdate';
+import Emergencies from './components/BaladiyaAgent/DangerSpace/Emergency/Emergencies';
+import EmergencyCreate from './components/BaladiyaAgent/DangerSpace/Emergency/EmergencyCreate';
+import EmergencyUpdate from './components/BaladiyaAgent/DangerSpace/Emergency/EmergencyUpdate';
+import Surveys from './components/BaladiyaAgent/Studies/Surveys/Surveys';
+import SurveyCreate from './components/BaladiyaAgent/Studies/Surveys/SurveyCreate';
+import SurveyUpdate from './components/BaladiyaAgent/Studies/Surveys/SurveyUpdate';
+import PublicityOffers from './components/Admin/PublicitySpace/PublicityOffer/PublicityOffers';
+import PublicityOfferCreate from './components/Admin/PublicitySpace/PublicityOffer/PublicityOfferCreate';
+import PublicityOfferUpdate from './components/Admin/PublicitySpace/PublicityOffer/PublicityOfferUpdate';
+import Publicities from './components/Admin/PublicitySpace/Publicity/Publicities';
+import PublicityUpdate from './components/Admin/PublicitySpace/Publicity/PublicityUpdate';
 
 const Routers = () => {
 
@@ -82,7 +103,8 @@ const Routers = () => {
     const ProfileWithNavigation = WithNavigation(Profile,false);
     const HomeWithNavigation = WithNavigation(Home,false);
     const ChangePasswordWithNavigation = WithNavigation(ChangePassword, false);
-    const CitizePortalWithNavigation = WithNavigation(CitizenPortalData, false);
+    const CitizenPortalWithNavigation = WithNavigation(CitizenPortalData, false);
+    const AdminCitizePortalWithNavigation = WithNavigation(AdminCitizenPortalData, false);
     const SportTopicsWithNavigation = WithNavigation(Topics, false);
     const TopicDetailsWithNavigation = WithNavigation(TopicDetailsComponent, false);
     const PoliticFormationWithNavigation = WithNavigation(Formations, false);
@@ -139,6 +161,32 @@ const Routers = () => {
     const StudiesWithNavigation = WithNavigation(Studies, false);
     const StudyCreateWithNavigation = WithNavigation(StudyCreate, false);
     const StudyUpdateWithNavigation = WithNavigation(StudyUpdate, false);
+    const CreationStepsWithNavigation = WithNavigation(CreationSteps, false);
+    const CreationStepCreateWithNavigation = WithNavigation(CreationStepCreate, false);
+    const CreationStepUpdateWithNavigation = WithNavigation(CreationStepUpdate, false);
+    const MicroEntrepriseCreationStepsWithNavigation = WithNavigation(MicroEntrepriseCreationSteps, false);
+    const MicroEntrepriseCreationStepCreateWithNavigation = WithNavigation(MicroEntrepriseCreationStepCreate, false);
+    const MicroEntrepriseCreationStepUpdateWithNavigation = WithNavigation(MicroEntrepriseCreationStepUpdate, false);
+    const HistoriquesWithNavigation = WithNavigation(Historiques, false);
+    const HistoriqueCreateWithNavigation = WithNavigation(HistoriqueCreate, false);
+    const HistoriqueUpdateWithNavigation = WithNavigation(HistoriqueUpdate, false);
+    const AdminHomeWithNavigation = WithNavigation(AdminHome, false);
+    const DangerDiscussionsWithNavigation = WithNavigation(DangerDiscussions, false);
+    const DangerDiscussionUpdateWithNavigation = WithNavigation(DangerDiscussionUpdate, false);
+    const EmergenciesWithNavigation = WithNavigation(Emergencies, false);
+    const EmergencyCreateWithNavigation = WithNavigation(EmergencyCreate, false);
+    const EmergencyUpdateWithNavigation = WithNavigation(EmergencyUpdate, false);
+    const SurveysWithNavigation = WithNavigation(Surveys, false);
+    const SurveyCreateWithNavigation = WithNavigation(SurveyCreate, false);
+    const SurveyUpdateWithNavigation = WithNavigation(SurveyUpdate, false);
+    const PublicityOffersWithNavigation = WithNavigation(PublicityOffers, false);
+    const PublicityOfferCreateWithNavigation = WithNavigation(PublicityOfferCreate, false);
+    const PublicityOfferUpdateWithNavigation = WithNavigation(PublicityOfferUpdate, false);
+    const PublicitiesWithNavigation = WithNavigation(Publicities, false);
+    const PublicityUpdateWithNavigation = WithNavigation(PublicityUpdate, false);
+
+
+    
 
     
   return (
@@ -152,7 +200,8 @@ const Routers = () => {
           <Route path="/profile" element={<ProfileWithNavigation />} />
           <Route path="/home" element={<HomeWithNavigation />} />
           <Route path="/change_password" element={<ChangePasswordWithNavigation />} />
-          <Route path="/citizen_portal" element={<CitizePortalWithNavigation />} />
+          <Route path="/citizen_portal" element={<CitizenPortalWithNavigation />} />
+          <Route path="/admin_citizen_portal" element={<AdminCitizePortalWithNavigation />} />
           <Route path="/sport_topics" element={<SportTopicsWithNavigation />} />
           <Route path="/topics/:id" element={<TopicDetailsWithNavigation />} />
           <Route path="/formations" element={<PoliticFormationWithNavigation />} />
@@ -210,6 +259,29 @@ const Routers = () => {
           <Route path="/studies" element={<StudiesWithNavigation/>} />
           <Route path="/study" element={<StudyCreateWithNavigation/>} />
           <Route path="/studies/:id" element={<StudyUpdateWithNavigation/>} />
+          <Route path="/creation_steps" element={<CreationStepsWithNavigation/>} />
+          <Route path="/creation_step" element={<CreationStepCreateWithNavigation/>} />
+          <Route path="/creation_steps/:id" element={<CreationStepUpdateWithNavigation/>} />
+          <Route path="/micro_entreprise_creation_steps" element={<MicroEntrepriseCreationStepsWithNavigation/>} />
+          <Route path="/micro_entreprise_creation_step" element={<MicroEntrepriseCreationStepCreateWithNavigation/>} />
+          <Route path="/micro_entreprise_creation_steps/:id" element={<MicroEntrepriseCreationStepUpdateWithNavigation/>} />
+          <Route path="/historiques" element={<HistoriquesWithNavigation/>} />
+          <Route path="/historique" element={<HistoriqueCreateWithNavigation/>} />
+          <Route path="/historiques/:id" element={<HistoriqueUpdateWithNavigation/>} />
+          <Route path="/admin-home" element={<AdminHomeWithNavigation/>}  />
+          <Route path="/danger-discussions" element={<DangerDiscussionsWithNavigation/>} />
+          <Route path="/danger-discussions/:id" element={<DangerDiscussionUpdateWithNavigation/>} />
+          <Route path="/emergencies" element={<EmergenciesWithNavigation/>} />
+          <Route path="/emergency" element={<EmergencyCreateWithNavigation/>} />
+          <Route path="/emergencies/:id" element={<EmergencyUpdateWithNavigation/>} />
+          <Route path="/surveys" element={<SurveysWithNavigation/>} />
+          <Route path="/survey" element={<SurveyCreateWithNavigation/>} />
+          <Route path="/surveys/:id" element={<SurveyUpdateWithNavigation/>} />
+          <Route path="/publicity_offers" element={<PublicityOffersWithNavigation/>} />
+          <Route path="/publicity_offer" element={<PublicityOfferCreateWithNavigation/>} />
+          <Route path="/publicity_offers/:id" element={<PublicityOfferUpdateWithNavigation/>} />
+          <Route path="/publicities" element={<PublicitiesWithNavigation/>} />
+          <Route path="/publicities/:id" element={<PublicityUpdateWithNavigation/>} />
         </Routes>
 
   );

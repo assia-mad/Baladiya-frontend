@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import apiInstance from "../../../../../../API";
-import AgendaDetails from "./AgendaDetails"; // Adjust the import path as needed
+import AgendaDetails from "./AgendaDetails"; 
 import { useParams } from "react-router-dom";
 import SuccessSnackbar from "../../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../../Tools/ErrorSnackBar";

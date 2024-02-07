@@ -19,6 +19,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import ErrorSnackbar from '../Tools/ErrorSnackBar';
 import { useState } from 'react';
 import './SignUp.css';
 

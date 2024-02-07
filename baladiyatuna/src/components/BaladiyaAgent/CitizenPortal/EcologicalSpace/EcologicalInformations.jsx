@@ -20,6 +20,7 @@ const EcologicalInformations = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const [userRole, setUserRole] = useState('');
   const filterItemslist = [
     { name: t("Tous les utilisateurs"), value: "Tous les utilisateurs" },
     { name: t("Créer par APC"), value: "Agent" },
@@ -39,7 +40,18 @@ const EcologicalInformations = () => {
 
   useEffect(() => {
     fetchData();
+    fetchUserRole();
   }, [typeFilter, stateFilter, filter, page, searchText]);
+
+  const fetchUserRole = async () => {
+    try {
+      const response = await apiInstance.get('user/');
+      setUserRole(response?.role); 
+      console.log("rooooooooooooooooooooooole",response.role);
+    } catch (error) {
+      console.log('Error fetching user role', error);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -58,6 +70,7 @@ const EcologicalInformations = () => {
       console.log("error", error);
     }
   };
+
 
   const handleFilterChange = (newValue) => {
     setFilter(newValue);
@@ -83,6 +96,20 @@ const EcologicalInformations = () => {
 
   const handlePageChange = (event, value) => {
     setPage(value);
+  };
+
+  const handleSwitchChange = async (id, newState) => {
+    try {
+      const state = newState;
+      const response = await apiInstance.patch(`ecological_informations/${id}/`, { state });
+      setEcologicalInformations((previnformations) =>
+        previnformations.map((information) =>
+          information.id === id ? { ...information, state } : information
+        )
+      );
+    } catch (error) {
+      console.log('Failed to change information state:', error);
+    }
   };
 
   return (
@@ -128,6 +155,8 @@ const EcologicalInformations = () => {
             ecologicalInformations={ecologicalInformations}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onValidate={handleSwitchChange}
+            userRole={userRole}
           />
         </Grid>
         <Grid item>

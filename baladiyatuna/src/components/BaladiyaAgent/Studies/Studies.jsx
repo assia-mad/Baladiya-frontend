@@ -17,6 +17,8 @@ import Study from './Study';
 import apiInstance from '../../../../API';
 import Search from '../../Tools/Search';
 import Filtering from '../../Tools/Filtering';
+import PrimaryColorText from '../../Tools/Title';
+
 
 const Studies = () => {
   const { t } = useTranslation();
@@ -32,10 +34,6 @@ const Studies = () => {
     { name: t('Crée par BEDS'), value: 'Admin' },
   ];
 
-  useEffect(() => {
-    fetchData();
-  }, [filter, page, searchText]);
-
   const fetchData = async () => {
     try {
       const response = await apiInstance.get(`studies/`, {
@@ -46,11 +44,16 @@ const Studies = () => {
         },
       });
       setStudies(response?.results);
+      console.log("stuuuuuuuuuuuuuuuuuuuudies",response.results);
       setTotalPages(response?.total_pages);
     } catch (error) {
       console.log('error', error);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [filter, page, searchText]);
 
   const handleEdit = (studyId) => {
     navigate(`/studies/${studyId}`);
@@ -90,7 +93,7 @@ const Studies = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">{t('Espace des études')}</Typography>
+          <PrimaryColorText className="title">{t('Espace Etudes')}</PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

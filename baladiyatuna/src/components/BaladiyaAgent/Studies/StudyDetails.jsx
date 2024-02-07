@@ -1,11 +1,10 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { Box, Grid, Typography, TextField } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Grid, TextField, useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import DateTimePicker from 'react-datetime-picker';
-import 'react-datetime-picker/dist/DateTimePicker.css';
+import { LocalizationProvider, DesktopDateTimePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import ReusableButton from '../../Tools/SaveButton';
-import PrimaryColorText from '../../Tools/Title'
+import PrimaryColorText from '../../Tools/Title';
 import apiInstance from '../../../../API';
 
 const StudyDetails = ({
@@ -15,98 +14,101 @@ const StudyDetails = ({
   handleUpdate,
   modifiedStudy,
 }) => {
-    const {t} = useTranslation();
-    const [ownername, setOwnerName] = useState('');
-    const isValidDate = (dateString) => {
-      return !isNaN(Date.parse(dateString));
-    };   
-    const defaultDate = new Date();
-    const initialDate = isValidDate(modifiedStudy.date) ? new Date(modifiedStudy.date) : defaultDate;
-    const [date, setDate] = useState(initialDate);
+  const { t } = useTranslation();
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const [ownerName, setOwnerName] = useState('');
+  const [date, setDate] = useState(new Date());
 
-    const fetchOwnerName = async () => {
-      try {
-        const response = await apiInstance.get(`/manage_users/${modifiedStudy.owner}/`);
-        setOwnerName(response?.first_name + ' ' + response?.last_name);
-        console.log(response?.first_name + ' ' + response?.last_name);
-      } catch (error) {
+  useEffect(() => {
+    if (mode === 'update' && modifiedStudy.date) {
+      setDate(new Date(modifiedStudy.date));
+    }
+    if (mode === 'update' && modifiedStudy.owner) {
+      fetchOwnerName();
+    }
+  }, [modifiedStudy, mode]);
+
+  const fetchOwnerName = async () => {
+    try {
+      const response = await apiInstance.get(`/manage_users/${modifiedStudy.owner}/`);
+      setOwnerName(response?.first_name + ' ' + response?.last_name);
+    } catch (error) {
       console.log('Error fetching owner name', error);
     }
   };
 
-    {mode === "update" &&
-      useEffect(() => {
-        fetchOwnerName();
-      }, [modifiedStudy.owner]);
-    }
-
+  const handleDateChange = (newDate) => {
+    setDate(newDate || new Date());
+  };
 
   return (
-    <Box ml={45} mt={20} mr={45}>
-      <Grid container spacing={1}>
-        <Grid item xs={12}>
-          <PrimaryColorText variant='h5' className='title'>
-            {t("Etude")}
-          </PrimaryColorText>
-        </Grid>
-        {mode === 'update' && (
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Box ml={isMobile ? 2 : 30} mt={isMobile ? 2 : 10} mr={isMobile ? 2 : 30}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <PrimaryColorText variant='h5' className='title'>
+              {t("Etude")}
+            </PrimaryColorText>
+          </Grid>
+          {mode === 'update' && (
+            <>
+              <Grid item xs={12}>
+                <TextField
+                  name='owner'
+                  label={t('Propriétaire')}
+                  fullWidth
+                  value={ownerName}
+                  disabled
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  name='created_at'
+                  label={t('Date de création')}
+                  fullWidth
+                  value={modifiedStudy.created_at}
+                  disabled
+                />
+              </Grid>
+            </>
+          )}
           <Grid item xs={12}>
             <TextField
-              name='owner'
-              label={t('Propriétaire')}
+              name='title'
+              label={t('Title')}
               fullWidth
-              value={ownername}
-              disabled
+              value={modifiedStudy.title}
+              onChange={handleChange}
             />
           </Grid>
-        )}
-        {mode === 'update' && (
           <Grid item xs={12}>
             <TextField
-              name='created_at'
-              label={t('Date de création')}
+              name='description'
+              label={t('Description')}
+              multiline
               fullWidth
-              value={modifiedStudy.created_at}
-              disabled
+              value={modifiedStudy.description}
+              onChange={handleChange}
             />
           </Grid>
-        )}
-        <Grid item xs={12}>
-          <TextField
-            name='title'
-            label={t('Title')}
-            fullWidth
-            value={modifiedStudy.title}
-            onChange={handleChange}
-          />
+          <Grid item xs={12}>
+            <DesktopDateTimePicker
+              label={t('Date')}
+              value={date}
+              onChange={handleDateChange}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+            />
+          </Grid>
+          <Grid item xs={12} justifyContent="center">
+            <ReusableButton
+              size='large' 
+              label={mode === 'update' ? t('Modifier') : t('Créer')}
+              onClick={() => (mode === 'update' ? handleUpdate(date) : handleCreate(date))}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            name='description'
-            label={t('Description')}
-            multiline
-            fullWidth
-            value={modifiedStudy.description}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} >
-              <DateTimePicker
-                onChange={setDate}
-                value={date}
-                format="dd-MM-yyyy HH:mm"
-              />
-        </Grid>
-        <Grid item xs={12} justifyContent="center">
-          <ReusableButton
-            size='large' 
-            label={mode === 'update' ? 'Update' : 'Create'}
-            onClick={() => (mode === 'update' ? handleUpdate(date) : handleCreate(date))}
-
-          />
-        </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </LocalizationProvider>
   );
 };
 

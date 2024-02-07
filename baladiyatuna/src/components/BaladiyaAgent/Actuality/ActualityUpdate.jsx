@@ -66,6 +66,7 @@ const ActualityUpdate = () => {
     formData.append('title', modifiedActuality.title);
     formData.append('description', modifiedActuality.description);
     formData.append('type', modifiedActuality.type);
+    formData.append('date',selectedDate.toISOString());
     if (file){
         formData.append('file', file);
     }

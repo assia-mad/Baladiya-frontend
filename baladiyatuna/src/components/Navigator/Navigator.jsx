@@ -6,6 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { styled } from "@mui/system";
 import { useTranslation } from "react-i18next";
 import apiInstance from "../../../API";
+import LanguageSelector from "../Tools/Languages/ChangeLanguage";
+import CollapsibleLeftNavigator from "./CollapsibleLeftNavigator";
 import './Navigator.css';
 
 
@@ -35,6 +37,7 @@ const StyledAppBar = styled(AppBar)({
     textDecoration: "none",
     color: theme.palette.primary.main,
     fontSize: "20px",
+    fontFamily: "sans-serif",
     marginLeft: theme.spacing(3),
     "&:hover": {
       color: theme.palette.secondary.main,
@@ -61,8 +64,16 @@ const StyledAppBar = styled(AppBar)({
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const storedApiEndpoint = sessionStorage.getItem('apiEndpoint');
     const token = sessionStorage.getItem('token');
+    const [userRole, setUserRole] = useState('');
     const navigate = useNavigate();
     const { t } = useTranslation();
+
+    const toggleDrawer = (open) => (event) => {
+      if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+        return;
+      }
+      setDrawerOpen(open);
+    };
 
     const handleMenuIconClick = () => {
       setDrawerOpen(true);
@@ -89,6 +100,7 @@ const StyledAppBar = styled(AppBar)({
             const response = await apiInstance.get(`user/`);
             console.log('fetching the user', response);
             setUserImage(response?.image);
+            setUserRole(response.role);
         } catch(error){
             console.log(error);
         }
@@ -98,34 +110,15 @@ const StyledAppBar = styled(AppBar)({
     },[userImage]);
 
     return (
+        <>
         <StyledAppBar>
           <StyledToolbar>
             <IconButton className="menu-icon" onClick={handleMenuIconClick}><MenuRoundedIcon color="primary" /></IconButton>
-            <Drawer anchor="left" open={isDrawerOpen} onClose={handleDrawerClose}>
-              <StyledList>
-                <ListItem button onClick={handleDrawerClose}>
-                  <ListItemText primary={t("Item 1")} />
-                </ListItem>
-                <ListItem button onClick={handleDrawerClose}>
-                  <ListItemText primary={t("Item 2")} />
-                </ListItem>
-                <ListItem button onClick={handleDrawerClose}>
-                  <ListItemText primary={t("Item 3")} />
-                </ListItem>
-                <ListItem button onClick={handleLogout}>
-                  <ListItemIcon>
-                    <LogoutIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={t("Logout")} />
-                </ListItem>
-              </StyledList>
-            </Drawer>
             <StyledAvatarContainer>
               <div>
-                <StyledLink to="/home">{t("Home")}</StyledLink>
                 <StyledLink to="/about">{t("About")}</StyledLink>
                 <StyledLink to="/manage_users">{t("Gérer")}</StyledLink>
-                <StyledLink to="/faq">{t("FAQ")}</StyledLink>
+                <LanguageSelector/>
               </div>
               <Link to="/profile">
                 <StyledAvatar alt="User Avatar" src={userImage} />
@@ -133,6 +126,8 @@ const StyledAppBar = styled(AppBar)({
             </StyledAvatarContainer>
           </StyledToolbar>
         </StyledAppBar>
+        <CollapsibleLeftNavigator isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} userRole={userRole} />
+        </>
     );
   };
   

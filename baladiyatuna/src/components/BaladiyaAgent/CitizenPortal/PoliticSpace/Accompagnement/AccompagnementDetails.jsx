@@ -4,7 +4,6 @@ import { TextField, Grid, Box, Button, Typography, Input } from "@mui/material";
 import StateMenuSelect from "../../../../Tools/StateMenu";
 import { useMediaQuery } from "@mui/material";
 import apiInstance from "../../../../../../API";
-import "./AccompagnementDetails.css";
 
 const AccompagnementDetails = ({
   mode,

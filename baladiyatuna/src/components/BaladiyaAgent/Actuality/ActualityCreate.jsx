@@ -63,6 +63,7 @@ const ActualityCreate = () => {
     formData.append('title', actuality.title);
     formData.append('description', actuality.description);
     formData.append('type', actuality.type);
+    formData.append('date',selectedDate.toISOString());
     if (file) {
       formData.append('file', file);
     }

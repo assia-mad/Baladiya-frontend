@@ -2,7 +2,9 @@ import React from 'react';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Box } from '@mui/material';
 import { styled } from "@mui/system";
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import apiInstance from '../../../API';
 import './Navigator.css';
 
 const StyledTypography = styled(Typography)(({ theme }) => ({
@@ -54,9 +56,22 @@ const StyledListItemText = styled(ListItemText)(({ theme }) => ({
 
 const Sidebar = ({ navigationItems }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Logout logic here
+
+    apiInstance.post('/logout/')
+    .then(response => {
+
+      sessionStorage.removeItem('token'); 
+
+      navigate('/');
+    })
+    .catch(error => {
+  
+      console.error('Logout failed', error);
+    });
+
   };
 
   return (
@@ -82,7 +97,7 @@ const Sidebar = ({ navigationItems }) => {
             <LogoutIcon />
           </StyledListItemIcon>
           <StyledListItemText>
-            <Typography variant="body1" style={{ fontSize: '15px' }}>
+            <Typography variant="body1" style={{ fontSize: '15px' }} >
               {t("Logout")}
             </Typography>
           </StyledListItemText>

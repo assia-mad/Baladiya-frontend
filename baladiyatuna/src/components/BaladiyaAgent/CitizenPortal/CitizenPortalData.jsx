@@ -25,14 +25,14 @@ const CitizenPortalData = () => {
       ], },
     { title: t('Espace social'), icon: <PeopleIcon fontSize="large" />,
       items: [
-        { label: t('Guide de Création'), path: '' },
+        { label: t('Guide de Création'), path: '/creation_steps' },
         { label: t('Agenda'), path: '/agendas' },
         { label: t('Information'), path: '/social_informations' },
       ], },
     { title: t('Espace écologique'), icon: <PeopleIcon fontSize="large" />, onClick: () => navigate("/ecological_informations")},
     { title: t('Espace économique'), icon: <MonetizationOnIcon fontSize="large" />,
       items: [
-        { label: t('Création micro Entreprise'), path: '' },
+        { label: t('Création micro Entreprise'), path: '/micro_entreprise_creation_steps' },
         { label: t('Fomation'), path: '/economic_formations' },
         { label: t('Patronat Local'), path: '/local_patronats' },
       ], },

@@ -71,9 +71,7 @@ const DiscussionDetailsComponent = () => {
         ...prevDiscussion,
         state: newState,
       }));
-      console.log('Switch Change Response:', response);
     } catch (error) {
-      console.log('Switch Change Error:', error);
     }
   };
 
@@ -88,7 +86,7 @@ const DiscussionDetailsComponent = () => {
     console.log('FormData:', formData);
 
     try {
-      const response = await apiInstance.patch(`discussions/${modifiedDiscussion.id}/`, formData, { // Replace with appropriate API endpoint
+      const response = await apiInstance.patch(`discussions/${modifiedDiscussion.id}/`, formData, { 
         headers: {
           'Content-Type': 'multipart/form-data',
         },
