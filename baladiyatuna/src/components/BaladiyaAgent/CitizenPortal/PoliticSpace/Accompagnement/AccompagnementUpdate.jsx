@@ -5,6 +5,17 @@ import { useParams } from "react-router-dom";
 import SuccessSnackbar from "../../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../../Tools/ErrorSnackBar";
 import { useTranslation } from "react-i18next";
+import algeriaCities from "../../../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const AccompagnementUpdate = () => {
   const { id } = useParams();
@@ -14,6 +25,10 @@ const AccompagnementUpdate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -32,6 +47,12 @@ const AccompagnementUpdate = () => {
       try {
         const response = await apiInstance.get(`accompagnements/${id}/`);
         setModifiedAccompagnement(response);
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        setWilayaCode(wilayaCode);
         console.log('Response:', response);
       } catch (error) {
         console.log('Error:', error);
@@ -67,6 +88,9 @@ const AccompagnementUpdate = () => {
     const formData = new FormData();
     formData.append('title', modifiedAccompagnement.title);
     formData.append('description', modifiedAccompagnement.description);
+    if (communeCode){
+      formData.append('commune',parseInt(communeCode));
+    };
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -119,6 +143,13 @@ const AccompagnementUpdate = () => {
         handleUpdate={handleUpdate}
         modifiedAccompagnement={modifiedAccompagnement}
         handleImageUpload={handleImageUpload}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        selectedCommuneName={selectedCommuneName}
+        topicWilaya={wilayaCode}
+        setSelectedCommuneName={setSelectedCommuneName}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

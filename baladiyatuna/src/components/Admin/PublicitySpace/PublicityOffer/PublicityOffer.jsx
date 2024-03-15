@@ -61,7 +61,7 @@ const PublicityOffer = ({ offers, onEdit, onDelete }) => {
     { label: t('Population'), dataKey: 'population', render: (item) => (
       <Typography>{item.population.toLocaleString()}</Typography>
     )},
-    { label: t('Price'), dataKey: 'price', render: (item) => (
+    { label: t('Prix'), dataKey: 'price', render: (item) => (
       <Typography>{item.price.toFixed(2)} DZD</Typography>
     )},
     { label: t('Action'), render: (item) => (

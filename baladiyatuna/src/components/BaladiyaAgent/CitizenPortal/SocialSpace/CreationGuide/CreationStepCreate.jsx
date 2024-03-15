@@ -17,6 +17,11 @@ const CreationStepCreate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -31,13 +36,14 @@ const CreationStepCreate = () => {
   };
 
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   }, []);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
     try {
       const response = await apiInstance.get(`user/`);
       setUserId(response.id);
+      setCurrentUSerCommune(response.commune);
     } catch (error) {
       console.log(error);
       setErrorMsg(t('Echec de trouver owner ID'));
@@ -54,16 +60,18 @@ const CreationStepCreate = () => {
   };
 
   const handleCreate = async () => {
-    const data = {
-      title: creationStep.title,
-      description: creationStep.description,
-      rang: creationStep.rang,
-      owner: userId,
-      type:'Social'
-    };
+    const formData = new FormData();
+
+    formData.append('title', creationStep.title);
+    formData.append('description', creationStep.description);
+    formData.append('rang', creationStep.rang);
+    formData.append('owner', userId);
+    formData.append('type', 'Social');
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
+    formData.append('commune',parsedCommune);
 
     try {
-      const response = await apiInstance.post(`companies_creation/`, data);
+      const response = await apiInstance.post(`companies_creation/`, formData);
       setSuccessOpen(true);
       setSuccessMsg(t("La création a réussi!"));
       console.log('Response of create:', response);
@@ -91,6 +99,12 @@ const CreationStepCreate = () => {
         handleChange={handleChange}
         handleSave={handleCreate}
         creationStepData={creationStep}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

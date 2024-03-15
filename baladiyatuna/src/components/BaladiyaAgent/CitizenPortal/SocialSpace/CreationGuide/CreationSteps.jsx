@@ -8,6 +8,7 @@ import apiInstance from '../../../../../../API';
 import Search from '../../../../Tools/Search';
 import Filtering from '../../../../Tools/Filtering';
 import NavigateButton from '../../../../Tools/NavigationButton';
+import PrimaryColorText from '../../../../Tools/Title';
 
 
 const CreationSteps = () => {
@@ -18,17 +19,20 @@ const CreationSteps = () => {
   const [filter, setFilter] = useState('All');
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
 
 
   useEffect(() => {
     fetchCreationSteps();
-  }, [page, searchText, filter]);
+  }, [page, searchText, filter, userData.commune]);
 
   const fetchCreationSteps = async () => {
     try {
       const response = await apiInstance.get(`companies_creation/`, {
         params: {
           page,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
           type:'Social',
         },
@@ -65,10 +69,10 @@ const CreationSteps = () => {
   return (
     <Box m={3}>
       <Grid container direction="column" alignItems="center" spacing={2}>
-        <Grid item>
-          <Typography variant="h4">
+        <Grid item mt={5}>
+          <PrimaryColorText className='title'>
             {t('Guide de Création')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

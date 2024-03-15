@@ -58,7 +58,7 @@ const PublicityOffers = () => {
     <Box m={3} mt={10}>
       <Grid container direction="column" alignItems="center" spacing={2}>
         <Grid item>
-          <PrimaryColorText className="title">{t('Offre de Publicités')}</PrimaryColorText>
+          <PrimaryColorText className="title">{t('Offres de Publicités')}</PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

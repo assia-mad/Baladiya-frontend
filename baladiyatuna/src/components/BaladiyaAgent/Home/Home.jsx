@@ -2,6 +2,7 @@ import React, { useTransition } from 'react';
 import LeftNavigatorList from "../../Navigator/LeftNavigatorList";
 import BarChart from './BarChart';
 import './Home.css';
+import { Box } from '@mui/material';
 
 const Home = () => {
 
@@ -10,9 +11,9 @@ const Home = () => {
       <div className="sidebar">
         <LeftNavigatorList/>
       </div>
-      <div className="main-content">
+      <Box className="main-content" mt={8} >
         <BarChart />
-      </div>
+      </Box>
       <div className="footer">
         Footer
       </div>

@@ -5,26 +5,65 @@ import { useTranslation } from 'react-i18next';
 import apiInstance from '../../../../../../API';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import PrimaryColorText from '../../../../Tools/Title';
+import Wilayas from '../../../../Tools/Wilayas';
+import Communes from '../../../../Tools/Communes';
 
-const InformationDetails = ({ mode, handleChange, handleUpdate, handleCreate, modifiedInformation }) => {
+const InformationDetails = ({ 
+  mode,
+   handleChange,
+  handleUpdate,
+  handleCreate,
+  modifiedInformation,
+  selectedCommune,
+  setSelectedCommune,
+  topicWilaya,
+  setCommuneCode,
+  communeCode,
+  setSelectedCommuneName,
+     }) => {
   const [ownerName, setOwnerName] = useState('');
   const { t } = useTranslation();
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  if (mode === 'update') {
+  const fetchOwnerName = async () => {
+    try {
+      const response = await apiInstance.get(`/manage_users/${modifiedInformation.owner}/`);
+      setOwnerName(response?.first_name + ' ' + response?.last_name);
+    } catch (error) {
+      console.log('Error fetching owner name', error);
+    }
+  };
+
+ 
     useEffect(() => {
-      const fetchOwnerName = async () => {
-        try {
-          const response = await apiInstance.get(`/manage_users/${modifiedInformation.owner}/`);
-          setOwnerName(response?.first_name + ' ' + response?.last_name);
-        } catch (error) {
-          console.log('Error fetching owner name', error);
-        }
-      };
 
+      if (mode === 'update') {
       fetchOwnerName();
+      };
+      fetchCurrentUser();
     }, [modifiedInformation.owner]);
-  }
+  
+    const fetchCurrentUser = async () => {
+      try{
+        const response = await apiInstance.get(`user/`);
+        setIsAdmin(response.role==='Admin');
+      } catch(error){
+
+      }
+    };
+
+  const handleSelectWilaya = (wilayaCode) => {
+    setWilayaCode(wilayaCode);
+    setSelectedCommune(null); 
+  };
+
+  const handleSelectCommune = (id, name) => {
+    setCommuneCode(id);
+    setSelectedCommuneName(name);
+  };
+    
 
   return (
     <Box mt={10} ml={mode === 'update' ? 20 : 30} mr={mode === 'update' ? 20 : 30}>
@@ -57,6 +96,16 @@ const InformationDetails = ({ mode, handleChange, handleUpdate, handleCreate, mo
                   />
                 </Grid>
               </>
+            )}
+            {isAdmin && (
+              <>
+              <Grid item xs={6}>
+                  <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+              </Grid>
+              <Grid item xs={6}>
+                <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+              </Grid>
+            </>
             )}
             <Grid item xs={12}>
               <TextField

@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from "react";
-import apiInstance from "../../../API";
-import TopicDetails from "./TopicDetails";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import TopicDetails from "./TopicDetails";
 import SuccessSnackbar from "../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../Tools/ErrorSnackBar";
-import { useTranslation } from "react-i18next";
+import apiInstance from "../../../API";
+import algeriaCities from "../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const TopicDetailsComponent = () => {
   const { id } = useParams();
@@ -14,6 +25,10 @@ const TopicDetailsComponent = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setsuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -31,6 +46,14 @@ const TopicDetailsComponent = () => {
       try {
         const response = await apiInstance.get(`topics/${id}/`);
         setModifiedTopic(response); 
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        console.log("commmmmmmmmmmmmmmmmmmune name", getCommuneNameById(communeID));
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        console.log("willllllllllllllayaa code",  getWilayaCodeByCommuneId(communeID));
+        setWilayaCode(wilayaCode);
         console.log('Response:', response);
       } catch (error) {
         console.log('Error:', error);
@@ -68,6 +91,9 @@ const TopicDetailsComponent = () => {
     formData.append('description', modifiedTopic.description);
     if (imageFile) {
       formData.append('image', imageFile);
+    }
+    if (communeCode){
+     formData.append('commune',parseInt(communeCode, 10));
     }
 
     console.log('FormData:', formData);
@@ -118,6 +144,13 @@ const TopicDetailsComponent = () => {
       handleUpdate={handleUpdate}
       modifiedTopic={modifiedTopic}
       handleImageUpload={handleImageUpload}
+      selectedCommune={selectedCommune}
+      setSelectedCommune={setSelectedCommune}
+      selectedCommuneName={selectedCommuneName}
+      topicWilaya={wilayaCode}
+      setSelectedCommuneName={setSelectedCommuneName}
+      communeCode={communeCode}
+      setCommuneCode={setCommuneCode}
     />
     </>
   );

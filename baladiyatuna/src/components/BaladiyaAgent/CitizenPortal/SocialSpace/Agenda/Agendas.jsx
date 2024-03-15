@@ -16,6 +16,7 @@ import Filtering from '../../../../Tools/Filtering';
 import NavigateButton from '../../../../Tools/NavigationButton';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import PrimaryColorText from '../../../../Tools/Title';
 
 const Agendas = () => {
   const { t } = useTranslation();
@@ -25,21 +26,25 @@ const Agendas = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
   const filterItemslist = [ {name:t("Tous les agendas"), value:"Tous les agendas"},
                             {name:t("En traitement"), value:"en traitement"},
                             {name:t("Validé"), value:"validé"},
                             {name:t("Refusé"), value:"refusé"},
-                              ]
+                              ];
+
 
   useEffect( () =>{
     fetchData();
-  },[filter,page,searchText]);
+  },[filter,page,searchText, userData.commune]);
 
   const fetchData = async () => {
     try {
         const response = await apiInstance.get(`agendas/`,{
           params: {
             page,
+            commune : userData.role === 'Admin' ? '' : userData.commune,
             state : filter === 'Tous les agendas' ? '' : filter,
             search: searchText,
           },
@@ -95,9 +100,9 @@ const Agendas = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className='title'>
+          <PrimaryColorText className='title'>
           {t ('Agenda')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

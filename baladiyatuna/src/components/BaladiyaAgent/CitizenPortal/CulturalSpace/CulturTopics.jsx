@@ -14,7 +14,7 @@ import apiInstance from '../../../../../API';
 import Search from '../../../Tools/Search';
 import Filtering from '../../../Tools/Filtering';
 import NavigateButton from '../../../Tools/NavigationButton';
-
+import PrimaryColorText from '../../../Tools/Title';
 
 
 const CulturTopics = () => {
@@ -26,6 +26,9 @@ const CulturTopics = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [
     { name: 'Tous les topics', value: 'Tous les topics' },
     { name: 'En traitement', value: 'en traitement' },
@@ -42,23 +45,22 @@ const CulturTopics = () => {
   ];
 
   useEffect(() => {
-    fetchData();
-  }, [filter, page, searchText]);
+      fetchData();
+  }, [userData.commune,filter, page, searchText]);
 
   const fetchData = async () => {
     try {
       const response = await apiInstance.get(`topics/`, {
         params: {
           page,
+          commune : userData.role  === 'Admin' ? '' : userData.commune,
           state: filter === 'Tous les topics' ? '' : filter,
           type: 'Culturel', 
           search: searchText,
         },
       });
-      console.log(filter, 'this is the filter');
       setCulturalTopics(response?.results); 
       setTotalPages(response?.total_pages);
-      console.log('theeeeeeeee', response.results);
     } catch (error) {
       console.log('errooor', error);
     }
@@ -67,9 +69,6 @@ const CulturTopics = () => {
   const handleFilterChange = (newValue) => {
     setFilter(newValue);
   };
-
-
-
 
   const handleEdit = (topicId) => {
     navigate(`/cultural_topics/${topicId}`); 
@@ -108,9 +107,9 @@ const CulturTopics = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">
+          <PrimaryColorText className="title">
             {t('Espace culturel')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

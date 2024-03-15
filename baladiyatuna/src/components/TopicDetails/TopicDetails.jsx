@@ -4,28 +4,65 @@ import { TextField, Grid, Box, Button, Typography, Input } from '@mui/material';
 import StateMenuSelect from '../Tools/StateMenu';
 import { useMediaQuery, styled } from '@mui/material';
 import apiInstance from '../../../API';
+import Wilayas from '../Tools/Wilayas';
+import Communes from '../Tools/Communes';
+import PrimaryColorText from '../Tools/Title';
 import "./TopicDetails.css"
 
 
-const TopicDetails = ({ mode, handleChange, handleSwitchChange, handleCreate, handleUpdate, modifiedTopic, handleImageUpload, theme }) => {
+const TopicDetails = ({ mode,
+   handleChange,
+   handleSwitchChange,
+   handleCreate,
+   handleUpdate,
+   modifiedTopic,
+   handleImageUpload,
+   theme,
+   selectedCommune,
+   setSelectedCommune,
+   topicWilaya,
+   setCommuneCode,
+   communeCode,
+   setSelectedCommuneName,
+ }) => {
   const { t } = useTranslation();
   const [ownerName, setOwnerName] = useState('');
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  if (mode === 'update') {
-    useEffect(() => {
+  useEffect(() => {
+    if (mode === 'update') {
       const fetchOwnerName = async () => {
         try {
           const response = await apiInstance.get(`/manage_users/${modifiedTopic.owner}/`);
-          setOwnerName(response?.data?.first_name + ' ' + response?.data?.last_name);
+          setOwnerName(response?.first_name + ' ' + response?.last_name);
         } catch (error) {
           console.log('Error fetching owner name', error);
         }
       };
-
       fetchOwnerName();
-    }, [modifiedTopic.owner]);
-  }
+    }
+    fetchCurrentUser();
+  }, [modifiedTopic.owner]);
+  const fetchCurrentUser = async () => {
+    try{
+      const response = await apiInstance.get(`user/`);
+      setIsAdmin(response.role==='Admin');
+    } catch(error){
+
+    }
+};
+
+  const handleSelectWilaya = (wilayaCode) => {
+    setWilayaCode(wilayaCode);
+    setSelectedCommune(null); 
+  };
+
+  const handleSelectCommune = (id, name) => {
+    setCommuneCode(id);
+    setSelectedCommuneName(name);
+  };
 
   return (
     <Box m={15} ml={mode=== "update" ? 15: 30} mr={mode=== "update" ? 15: 30} >
@@ -60,9 +97,9 @@ const TopicDetails = ({ mode, handleChange, handleSwitchChange, handleCreate, ha
         <Grid item xs={(isMobile || mode === "create") ? 12 : 7}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography className='title'>
+              <PrimaryColorText className='title'>
                 {t('Sujet sportif')}
-              </Typography>
+              </PrimaryColorText>
             </Grid>
             {mode === "update" && (
               <>
@@ -85,6 +122,16 @@ const TopicDetails = ({ mode, handleChange, handleSwitchChange, handleCreate, ha
                   />
                 </Grid>
               </>
+            )}
+            {isAdmin && (
+              <>
+            <Grid item xs={6}>
+              <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+          </Grid>
+          <Grid item xs={6}>
+            <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+          </Grid>
+          </>
             )}
             <Grid item xs={12}>
               <TextField

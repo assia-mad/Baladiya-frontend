@@ -18,6 +18,7 @@ import Visit from './Visit';
 import apiInstance from '../../../../../API';
 import Search from '../../../Tools/Search';
 import Filtering from '../../../Tools/Filtering';
+import PrimaryColorText from '../../../Tools/Title';
 import './Visit.css'
 
 const Visits = () => {
@@ -28,15 +29,17 @@ const Visits = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [ {name:t("Toutes les visites"), value:"Toutes les visites"},
                             {name:t("En traitement"), value:"en traitement"},
                             {name:t("Validé"), value:"validé"},
                             {name:t("Refusé"), value:"refusé"},
                               ]
-
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [filter, page, searchText, userData.commune]);
 
   const fetchData = async () => {
     try {
@@ -44,6 +47,7 @@ const Visits = () => {
         params: {
           page,
           state: filter === 'Toutes les visites' ? '' : filter,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
         },
       });
@@ -92,7 +96,7 @@ const Visits = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">{t('Espace visite')}</Typography>
+          <PrimaryColorText className="title">{t('Espace visite')}</PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

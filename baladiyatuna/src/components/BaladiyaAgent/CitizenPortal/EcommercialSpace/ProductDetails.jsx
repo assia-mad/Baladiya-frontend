@@ -5,6 +5,7 @@ import { useMediaQuery } from '@mui/material';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import StateMenuSelect from '../../../Tools/StateMenu';
 import apiInstance from '../../../../../API';
+import PrimaryColorText from '../../../Tools/Title';
 
 
 const ProductDetails = ({ mode, handleChange, handleSwitchChange, handleCreate, handleUpdate, modifiedProduct, handleImageUpload }) => {
@@ -60,9 +61,9 @@ const ProductDetails = ({ mode, handleChange, handleSwitchChange, handleCreate, 
         <Grid item xs={(isMobile || mode === "create") ? 12 : 7}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography className='title'>
+              <PrimaryColorText className='title'>
                 {t('Product')}
-              </Typography>
+              </PrimaryColorText>
             </Grid>
             {mode === "update" && (
               <Grid item xs={6}>

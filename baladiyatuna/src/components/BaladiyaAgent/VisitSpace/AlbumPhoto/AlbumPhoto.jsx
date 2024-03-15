@@ -8,6 +8,7 @@ import Filtering from '../../../Tools/Filtering';
 import Search from '../../../Tools/Search';
 import NavigateButton from '../../../Tools/NavigationButton';
 import PaginationItem from '../../../Tools/Pagination';
+import PrimaryColorText from '../../../Tools/Title';
 
 
 const AlbumPhoto = () => {
@@ -18,6 +19,9 @@ const AlbumPhoto = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [
     { name: t("Toutes les visites"), value: "Toutes les visites" },
     { name: t("En traitement"), value: "en traitement" },
@@ -25,9 +29,10 @@ const AlbumPhoto = () => {
     { name: t("Refusé"), value: "refusé" },
   ];
 
+
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [filter, page, searchText, userData.commune]);
 
   const fetchData = async () => {
     try {
@@ -35,6 +40,7 @@ const AlbumPhoto = () => {
         params: {
           page,
           state: filter === 'Toutes les visites' ? '' : filter,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
         },
       });
@@ -82,7 +88,7 @@ const AlbumPhoto = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">{t('Album photo')}</Typography>
+          <PrimaryColorText className="title">{t('Album photo')}</PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

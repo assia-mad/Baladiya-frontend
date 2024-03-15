@@ -10,6 +10,7 @@ import Filtering from "../../../../Tools/Filtering";
 import PaginationItem from "../../../../Tools/Pagination";
 import apiInstance from "../../../../../../API";
 import NavigateButton from "../../../../Tools/NavigationButton";
+import PrimaryColorText from "../../../../Tools/Title";
 
 const Activities = () => {
 
@@ -20,6 +21,9 @@ const Activities = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchText, setSearchText] = useState('');
+    const userDataString = localStorage.getItem('user');
+    const userData = JSON.parse(userDataString);
+  
     const filterItemslist = [ {name:t("Tous les utilisateurs"), value:"Tous les utilisateurs"},
                               {name:t("Créer par APC"), value:"Agent"},
                               {name:t("Créer par Administrateur"), value:"Admin"},
@@ -27,22 +31,22 @@ const Activities = () => {
   
     useEffect( () => {
       fetchData();
-    },[filter,page,searchText]);
+    },[filter,page,searchText, userData.commune]);
   
     const fetchData = async () => {
       try {
           const response = await apiInstance.get(`activities/`,{
             params: {
               page,
+              commune : userData.role === 'Admin' ? '' : userData.commune,
               owner__role : filter === 'Tous les utilisateurs' ? '' : filter,
               search: searchText,
             },
           });
-          console.log(filter,"this is the filter");
+    
           setActivities(response?.results);
           setTotalPages(response?.total_pages);
-          console.log("theeeeeeeee",response.results);
-  
+   
       }catch(error){
               console.log("errooor",error);
       }
@@ -77,9 +81,9 @@ const Activities = () => {
           <CheckCircle />
         </Avatar>
           <Grid item>
-            <Typography className='title'>
+            <PrimaryColorText className='title'>
             {t ('Activités')}
-            </Typography>
+            </PrimaryColorText>
           </Grid>
           <Grid item>
             <Box display="flex" alignItems="center" mb={2}>

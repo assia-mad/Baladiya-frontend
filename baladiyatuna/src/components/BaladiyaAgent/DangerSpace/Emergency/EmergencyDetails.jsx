@@ -4,36 +4,74 @@ import { useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import apiInstance from '../../../../../API';
 import StateMenuSelect from '../../../Tools/StateMenu';
+import PrimaryColorText from '../../../Tools/Title';
+import Wilayas from '../../../Tools/Wilayas';
+import Communes from '../../../Tools/Communes';
 
-const EmergencyDetails = ({ mode, handleChange, handleSwitchChange, handleUpdate, handleCreate, modifiedEmergency }) => {
+const EmergencyDetails = () => ({ mode, 
+  handleChange, 
+  handleSwitchChange, 
+  handleUpdate, 
+  handleCreate, 
+  modifiedEmergency,
+  selectedCommune,
+  setSelectedCommune,
+  topicWilaya,
+  setCommuneCode,
+  communeCode,
+  setSelectedCommuneName,
+ }) => {
   const [ownerName, setOwnerName] = useState('');
   const { t } = useTranslation();
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin,setIsAdmin] = useState(false);
 
-  if (mode === 'update') {
-    useEffect(() => {
-      const fetchOwnerName = async () => {
-        try {
-          const response = await apiInstance.get(`/manage_users/${modifiedEmergency.owner}/`);
-          setOwnerName(response?.first_name + ' ' + response?.last_name);
-        } catch (error) {
-          console.log('Error fetching owner name', error);
-        }
-      };
-
+  useEffect(() => {
+    if (mode === 'update' && modifiedEmergency.owner) {
       fetchOwnerName();
-    }, [modifiedEmergency.owner]);
-  }
+    }
+    fetchCurrentUser();
+  }, [mode, modifiedEmergency.owner]);
+
+  const fetchOwnerName = async () => {
+    try {
+      const response = await apiInstance.get(`/manage_users/${modifiedEmergency.owner}/`);
+      setOwnerName(response?.first_name + ' ' + response?.last_name);
+    } catch (error) {
+      console.log('Error fetching owner name', error);
+    }
+  };
+  
+  const fetchCurrentUser = async () => {
+        try{
+          const response = await apiInstance.get(`user/`);
+          setIsAdmin(response.role==='Admin');
+        } catch(error){
+
+        }
+  };
+
+  const handleSelectWilaya = (wilayaCode) => {
+    setWilayaCode(wilayaCode);
+    setSelectedCommune(null); 
+  };
+
+  const handleSelectCommune = (id, name) => {
+    setCommuneCode(id);
+    setSelectedCommuneName(name);
+  };
+
 
   return (
-    <Box mt={10} ml={mode === 'update' ? 20 : 30} mr={mode === 'update' ? 20 : 30}>
+    <Box mt={10} ml={mode === 'update' ? 25 : 30} mr={mode === 'update' ? 25 : 30}>
       <Grid container alignItems="center" direction={isMobile ? 'column' : 'row'}>
         <Grid item xs={12}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography className='title'>
+              <PrimaryColorText className='title'>
                 {t('Emergency')}
-              </Typography>
+              </PrimaryColorText>
             </Grid>
             {mode === 'update' &&
               <>
@@ -57,6 +95,16 @@ const EmergencyDetails = ({ mode, handleChange, handleSwitchChange, handleUpdate
                 </Grid>
               </>
             }
+            {isAdmin && (
+            <>
+              <Grid item xs={6}>
+                  <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+              </Grid>
+              <Grid item xs={6}>
+                <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+              </Grid>
+              </>
+          )}
             <Grid item xs={12}>
               <TextField
                 name="title"

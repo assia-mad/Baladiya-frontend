@@ -91,6 +91,8 @@ import PublicityOfferCreate from './components/Admin/PublicitySpace/PublicityOff
 import PublicityOfferUpdate from './components/Admin/PublicitySpace/PublicityOffer/PublicityOfferUpdate';
 import Publicities from './components/Admin/PublicitySpace/Publicity/Publicities';
 import PublicityUpdate from './components/Admin/PublicitySpace/Publicity/PublicityUpdate';
+import UserDetails from './components/BaladiyaAgent/ManageUsers/UserDetails';
+import ConfirmEmail from './components/ConfirmEmail/ConfirmEmail';
 
 const Routers = () => {
 
@@ -184,6 +186,8 @@ const Routers = () => {
     const PublicityOfferUpdateWithNavigation = WithNavigation(PublicityOfferUpdate, false);
     const PublicitiesWithNavigation = WithNavigation(Publicities, false);
     const PublicityUpdateWithNavigation = WithNavigation(PublicityUpdate, false);
+    const UserDetailsWithNavigation = WithNavigation(UserDetails,false);
+    const ConfirmEmailWithNavigation = WithNavigation(ConfirmEmail, false);
 
 
     
@@ -282,6 +286,8 @@ const Routers = () => {
           <Route path="/publicity_offers/:id" element={<PublicityOfferUpdateWithNavigation/>} />
           <Route path="/publicities" element={<PublicitiesWithNavigation/>} />
           <Route path="/publicities/:id" element={<PublicityUpdateWithNavigation/>} />
+          <Route path='/user/:id' element={<UserDetailsWithNavigation/>}/>
+          <Route path="/baladiya/account-confirm-email" element={<ConfirmEmailWithNavigation/>} />
         </Routes>
 
   );

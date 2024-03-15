@@ -17,6 +17,11 @@ const CreateEconomicAccompagnement = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(false);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -31,13 +36,14 @@ const CreateEconomicAccompagnement = () => {
   };
 
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   }, []);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
     try {
       const response = await apiInstance.get(`user/`);
       setUserId(response.id);
+      setCurrentUSerCommune(response.commune);
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -56,7 +62,9 @@ const CreateEconomicAccompagnement = () => {
 
     if (imageFile) {
       formData.append('image', imageFile);
-    }
+    };
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
+    formData.append('commune',parsedCommune);
 
     try {
       const response = await apiInstance.post(`accompagnements/`, formData, {
@@ -107,6 +115,12 @@ const CreateEconomicAccompagnement = () => {
         handleCreate={handleCreate}
         handleImageUpload={handleImageUpload}
         modifiedAccompagnement={accompagnement}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

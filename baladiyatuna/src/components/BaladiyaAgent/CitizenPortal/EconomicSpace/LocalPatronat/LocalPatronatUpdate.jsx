@@ -5,6 +5,17 @@ import { useParams } from "react-router-dom";
 import SuccessSnackbar from "../../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../../Tools/ErrorSnackBar";
 import { useTranslation } from "react-i18next";
+import algeriaCities from "../../../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const LocalPartonatUpdate = () => {
   const { id } = useParams();
@@ -15,6 +26,10 @@ const LocalPartonatUpdate = () => {
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [comments, setComments] = useState([]);
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
 const handleToastClose = (event, reason) => {
@@ -32,6 +47,12 @@ const handleToastClose = (event, reason) => {
       try {
         const response = await apiInstance.get(`discussions/${id}/`);
         setModifiedLocalPartonat(response); 
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        setWilayaCode(wilayaCode);
         console.log('Local Partonat Response:', response);
       } catch (error) {
         console.log('Local Partonat Error:', error);
@@ -67,6 +88,9 @@ const handleToastClose = (event, reason) => {
     const formData = new FormData();
     formData.append('title', modifiedLocalPartonat.title);
     formData.append('description', modifiedLocalPartonat.description);
+    if (communeCode){
+      formData.append('commune',parseInt(communeCode));
+    };
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -119,6 +143,13 @@ const handleToastClose = (event, reason) => {
         modifiedLocalPartonat={modifiedLocalPartonat}
         handleImageUpload={handleImageUpload}
         comments={comments}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        selectedCommuneName={selectedCommuneName}
+        topicWilaya={wilayaCode}
+        setSelectedCommuneName={setSelectedCommuneName}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

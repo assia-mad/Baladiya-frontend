@@ -8,6 +8,7 @@ import apiInstance from '../../../../../../API';
 import Search from '../../../../Tools/Search';
 import Filtering from '../../../../Tools/Filtering';
 import NavigateButton from '../../../../Tools/NavigationButton';
+import PrimaryColorText from '../../../../Tools/Title';
 
 
 const Informations = () => {
@@ -18,20 +19,23 @@ const Informations = () => {
   const [filter, setFilter] = useState('Tous les utilisateurs');
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
   const filterItemslist = [ {name:t("Tous les utilisateurs"), value:"Tous les utilisateurs"},
                             {name:t("APC"), value:"Agent"},
                             {name:t("Admin"), value:"Admin"},
-                                ]
+                                ];
 
   useEffect(() => {
     fetchData();
-  }, [page, searchText, filter]);
+  }, [page, searchText, filter, userData.commune]);
 
   const fetchData = async () => {
     try {
       const response = await apiInstance.get(`social_informations/`, {
         params: {
           page,
+          commune : userData.role === 'Admin'? '' : userData.commune,
           owner__role : filter === 'Tous les utilisateurs' ? '' : filter,
           search: searchText,
         },
@@ -68,10 +72,10 @@ const Informations = () => {
   return (
     <Box m={3}>
       <Grid container direction="column" alignItems="center" spacing={2}>
-        <Grid item>
-          <Typography className="title">
+        <Grid item mt={5}>
+          <PrimaryColorText className="title">
             {t('Informations')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

@@ -9,6 +9,7 @@ import Filtering from "../../Tools/Filtering";
 import PaginationItem from "../../Tools/Pagination";
 import apiInstance from "../../../../API";
 import NavigateButton from "../../Tools/NavigationButton";
+import PrimaryColorText from "../../Tools/Title";
 
 const Actualities = () => {
   const { t } = useTranslation();
@@ -19,7 +20,9 @@ const Actualities = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
-  const [userRole, setUserRole] = useState('')
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [ 
     {name:t("Tous les actualitées"), value:"Tous les actualitées"},
     {name:t("En traitement"), value:"en traitement"},
@@ -39,38 +42,25 @@ const Actualities = () => {
       { name: t("Education"), value: "Education" },
       { name: t("Entreprise"), value: "Entreprise" },
     ];
-
-
-    useEffect(() => {
-      fetchUserRole();
-    }, []);  
+  
     
     useEffect(() => {
-      if (userRole) {
         fetchData();
-      }
-    }, [typeFilter, filter, page, searchText, userRole]); 
+    }, [typeFilter, filter, page, searchText, userData.commune]); 
     
-    const fetchUserRole = async () => {
-      try {
-        const response = await apiInstance.get('user/');
-        setUserRole(response?.role);
-      } catch (error) {
-        console.log('Error fetching user role', error);
-      }
-    };
     
     const fetchData = async () => {
       try {
         const params = new URLSearchParams({
           page: page,
           state: filter === 'Tous les actualitées' ? '' : filter,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
         });
     
-        const endpoint = userRole === "Admin" ? 'admin_actualities/' : 'actualities/';
+        const endpoint = userData.role === "Admin" ? 'admin_actualities/' : 'actualities/';
     
-        if (userRole !== "Admin" || typeFilter !== 'Tous les types') {
+        if (userData.role !== "Admin" || typeFilter !== 'Tous les types') {
           params.append('type', typeFilter);
         }
 
@@ -122,7 +112,7 @@ const Actualities = () => {
       console.log('error');
     }
   };
-  const isAdmin = userRole === "Admin";
+  const isAdmin = userData.role === "Admin";
 
   return (
     <Box m={3}>
@@ -131,9 +121,9 @@ const Actualities = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className='title'>
+          <PrimaryColorText className='title'>
             {t('Actualitées')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

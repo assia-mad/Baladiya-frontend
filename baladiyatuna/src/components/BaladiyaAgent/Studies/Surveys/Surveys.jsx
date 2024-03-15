@@ -18,6 +18,8 @@ const Surveys = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
 
   const filterItemslist = [
     { name: t('Tous les sondages'), value: 'Tous les sondages' },
@@ -25,9 +27,10 @@ const Surveys = () => {
     { name: t('Crée par BEDS'), value: 'Admin' },
   ];
 
+
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [filter, page, searchText, userData.commune]);
 
   const fetchData = async () => {
     try {
@@ -35,6 +38,7 @@ const Surveys = () => {
         params: {
           page,
           owner__role: filter === 'Tous les sondages' ? '' : filter,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
         },
       });

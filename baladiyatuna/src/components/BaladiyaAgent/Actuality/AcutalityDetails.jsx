@@ -10,7 +10,8 @@ import 'react-datetime-picker/dist/DateTimePicker.css';
 import StateMenuSelect from '../../Tools/StateMenu';
 import apiInstance from '../../../../API';
 import PrimaryColorText from '../../Tools/Title';
-
+import Wilayas from "../../Tools/Wilayas";
+import Communes from "../../Tools/Communes"
 
 const ActualityDetails = ({
   mode,
@@ -20,6 +21,12 @@ const ActualityDetails = ({
   handleUpdate,
   modifiedActuality,
   handleFileUpload,
+  selectedCommune,
+  setSelectedCommune,
+  topicWilaya,
+  setCommuneCode,
+  communeCode,
+  setSelectedCommuneName,
 }) => {
   const { t } = useTranslation();
   const [ownerName, setOwnerName] = useState('');
@@ -27,6 +34,8 @@ const ActualityDetails = ({
   const [date, setDate] = useState(mode === 'update' ? new Date(modifiedActuality.created_at) : new Date());
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
   const [userRole, setUserRole] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin,setIsAdmin] = useState(false);
 
 
   if (mode === 'update') {
@@ -53,7 +62,7 @@ const ActualityDetails = ({
     try {
       const response = await apiInstance.get('user/');
       setUserRole(response?.role); 
-      console.log("rooooooooooooooooooooooole",response.role);
+      setIsAdmin(response.role==='Admin');
     } catch (error) {
       console.log('Error fetching user role', error);
     }
@@ -74,7 +83,16 @@ const ActualityDetails = ({
     }
   };
 
-  const isAdmin = userRole === 'Admin';
+  const handleSelectWilaya = (wilayaCode) => {
+    setWilayaCode(wilayaCode);
+    setSelectedCommune(null); 
+  };
+
+  const handleSelectCommune = (id, name) => {
+    setCommuneCode(id);
+    setSelectedCommuneName(name);
+  };
+
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -83,7 +101,7 @@ const ActualityDetails = ({
       <Grid container spacing={2}>
       {mode === 'update' && (
             <Grid item xs={12} md={5}>
-              <Box sx={{ width: '100%', textAlign: 'center' }}>
+              <Box sx={{ width: '100%', textAlign: 'center', height:'100%' }}>
                 {/* Conditional rendering based on file type */}
                 {modifiedActuality.file && (modifiedActuality.file.endsWith('.jpg') || modifiedActuality.file.endsWith('.jpeg') || modifiedActuality.file.endsWith('.png')) ? (
                   <img
@@ -150,6 +168,16 @@ const ActualityDetails = ({
                 </Grid>
               </>
             )}
+             {isAdmin && (
+            <>
+              <Grid item xs={6}>
+                  <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+              </Grid>
+              <Grid item xs={6}>
+                <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+              </Grid>
+            </>
+          )}
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -172,7 +200,7 @@ const ActualityDetails = ({
             </Grid>
             <Grid item xs={12} sm={6}>
             <DesktopDateTimePicker
-              label={t('Date & Time')}
+              label={t('Date')}
               value={date}
               onChange={handleDateChange}  
               renderInput={(params) => <TextField {...params} />}
@@ -222,7 +250,7 @@ const ActualityDetails = ({
                   component="label"
                   fullWidth
                 >
-                  Upload File
+                  {t('télécharger un fichier (video/image)')}
                   <input
                     type="file"
                     hidden
@@ -239,7 +267,7 @@ const ActualityDetails = ({
                   color="primary"
                   onClick={() => mode === 'update' ? handleUpdate(date) : handleCreate(date)}
                 >
-                  {mode === 'update' ? t('Save') : t('Create')}
+                  {mode === 'update' ? t('Modifier') : t('Créer')}
             </Button>
             </Grid>
           </Grid>

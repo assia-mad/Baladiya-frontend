@@ -19,6 +19,11 @@ const ActivityCreate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -33,13 +38,14 @@ const ActivityCreate = () => {
   };
 
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   }, []);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
     try {
       const response = await apiInstance.get(`user/`);
       setUserId(response?.id);
+      setCurrentUSerCommune(response?.commune);
     } catch (error) {
       console.log(error);
       setErrorMsg(t('Echec de trouver owner ID'));
@@ -56,6 +62,7 @@ const ActivityCreate = () => {
   };
 
   const handleCreate = async (selectedDate) => {
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
     const data = {
       title: activity.title,
       description: activity.description,
@@ -63,6 +70,7 @@ const ActivityCreate = () => {
       localisation: activity.localisation,
       directed_by: activity.directed_by, 
       owner: userId,
+      commune: parsedCommune,
     };
     try {
       const response = await apiInstance.post(`activities/`, data);
@@ -85,6 +93,12 @@ const ActivityCreate = () => {
         handleChange={handleChange}
         handleCreate={handleCreate}
         modifiedActivity={activity}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

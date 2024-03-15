@@ -8,6 +8,7 @@ import DangerDiscussion from './DangerDiscussion';
 import apiInstance from '../../../../../API';
 import Search from '../../../Tools/Search';
 import Filtering from '../../../Tools/Filtering';
+import PrimaryColorText from '../../../Tools/Title';
 
 
 const DangerDiscussions = () => {
@@ -18,6 +19,9 @@ const DangerDiscussions = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [
     { name: 'Tous les discussions', value: 'Tous les discussions' },
     { name: 'En traitement', value: 'en traitement' },
@@ -27,7 +31,8 @@ const DangerDiscussions = () => {
 
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [filter, page, searchText,userData.commune]);
+
 
   const fetchData = async () => {
     try {
@@ -36,6 +41,7 @@ const DangerDiscussions = () => {
           page,
           state: filter === 'Tous les discussions' ? '' : filter,
           type: 'Danger',
+          commune: userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
         },
       });
@@ -89,7 +95,7 @@ const DangerDiscussions = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">{t('Discussion Politique')}</Typography>
+          <PrimaryColorText className="title">{t('Discussion Politique')}</PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

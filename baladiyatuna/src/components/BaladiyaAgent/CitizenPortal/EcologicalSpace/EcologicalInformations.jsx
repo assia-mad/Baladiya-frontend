@@ -9,6 +9,7 @@ import Filtering from "../../../Tools/Filtering";
 import PaginationItem from "../../../Tools/Pagination";
 import apiInstance from "../../../../../API";
 import NavigateButton from "../../../Tools/NavigationButton";
+import PrimaryColorText from "../../../Tools/Title";
 
 const EcologicalInformations = () => {
   const { t } = useTranslation();
@@ -20,7 +21,9 @@ const EcologicalInformations = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
-  const [userRole, setUserRole] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [
     { name: t("Tous les utilisateurs"), value: "Tous les utilisateurs" },
     { name: t("Créer par APC"), value: "Agent" },
@@ -40,24 +43,14 @@ const EcologicalInformations = () => {
 
   useEffect(() => {
     fetchData();
-    fetchUserRole();
-  }, [typeFilter, stateFilter, filter, page, searchText]);
-
-  const fetchUserRole = async () => {
-    try {
-      const response = await apiInstance.get('user/');
-      setUserRole(response?.role); 
-      console.log("rooooooooooooooooooooooole",response.role);
-    } catch (error) {
-      console.log('Error fetching user role', error);
-    }
-  };
+  }, [typeFilter, stateFilter, filter, page, searchText, userData.commune]);
 
   const fetchData = async () => {
     try {
       const response = await apiInstance.get(`ecological_informations/`, {
         params: {
           page,
+          commune : userData.role === 'Admin' ? '': userData.commune,
           owner__role: filter === 'Tous les utilisateurs' ? '' : filter,
           state: stateFilter === 'Tous les publications' ? '' : stateFilter,
           type : typeFilter === 'Tous les types' ? '' : typeFilter,
@@ -119,9 +112,9 @@ const EcologicalInformations = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">
+          <PrimaryColorText className="title">
             {t("Informations Ecologiques")}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>
@@ -156,7 +149,7 @@ const EcologicalInformations = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onValidate={handleSwitchChange}
-            userRole={userRole}
+            userRole={userData.role}
           />
         </Grid>
         <Grid item>

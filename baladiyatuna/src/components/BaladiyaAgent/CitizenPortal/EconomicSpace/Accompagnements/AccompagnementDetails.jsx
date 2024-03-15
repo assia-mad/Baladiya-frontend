@@ -4,6 +4,9 @@ import { TextField, Grid, Box, Button, Typography, Input } from "@mui/material";
 import StateMenuSelect from "../../../../Tools/StateMenu";
 import { useMediaQuery } from "@mui/material";
 import apiInstance from "../../../../../../API";
+import PrimaryColorText from "../../../../Tools/Title";
+import Wilayas from "../../../../Tools/Wilayas";
+import Communes from "../../../../Tools/Communes";
 
 const EconomicAccompagnementDetails = ({
   mode,
@@ -12,29 +15,57 @@ const EconomicAccompagnementDetails = ({
   handleUpdate,
   modifiedAccompagnement,
   handleImageUpload,
+  selectedCommune,
+  setSelectedCommune,
+  topicWilaya,
+  setCommuneCode,
+  communeCode,
+  setSelectedCommuneName,
 }) => {
   const { t } = useTranslation();
   const [ownerName, setOwnerName] = useState("");
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  if (mode === "update") {
-    useEffect(() => {
-      const fetchOwnerName = async () => {
-        try {
-          const response = await apiInstance.get(
-            `/manage_users/${modifiedAccompagnement.owner}/`
-          );
-          setOwnerName(
-            response?.first_name + " " + response?.last_name
-          );
-        } catch (error) {
-          console.log("Error fetching owner name", error);
-        }
-      };
+  useEffect(() => {
+    if (mode === "update") {
+    fetchOwnerName();
+    };
+    fetchCurrentUser();
+  }, [modifiedAccompagnement.owner]);
 
-      fetchOwnerName();
-    }, [modifiedAccompagnement.owner]);
+
+const fetchOwnerName = async () => {
+  try {
+    const response = await apiInstance.get(
+      `/manage_users/${modifiedAccompagnement.owner}/`
+    );
+    setOwnerName(
+      response?.first_name + " " + response?.last_name
+    );
+  } catch (error) {
+    console.log("Error fetching owner name", error);
   }
+};
+
+const fetchCurrentUser = async () => {
+  try{
+    const response = await apiInstance.get(`user/`);
+    setIsAdmin(response.role==='Admin');
+  } catch(error){
+
+  }
+};
+const handleSelectWilaya = (wilayaCode) => {
+  setWilayaCode(wilayaCode);
+  setSelectedCommune(null); 
+};
+
+const handleSelectCommune = (id, name) => {
+  setCommuneCode(id);
+  setSelectedCommuneName(name);
+};
 
   return (
     <Box m={15} ml={mode === "update" ? 15 : 30} mr={mode === "update" ? 15 : 30}>
@@ -82,7 +113,7 @@ const EconomicAccompagnementDetails = ({
         <Grid item xs={isMobile || mode === "create" ? 12 : 7}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography className="title">{t("Accompagnement")}</Typography>
+              <PrimaryColorText className="title">{t("Accompagnement")}</PrimaryColorText>
             </Grid>
             {mode === "update" && (
               <>
@@ -105,6 +136,16 @@ const EconomicAccompagnementDetails = ({
                   />
                 </Grid>
               </>
+            )}
+            {isAdmin && (
+              <>
+            <Grid item xs={6}>
+              <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+            </Grid>
+            <Grid item xs={6}>
+              <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+            </Grid>
+            </>
             )}
             <Grid item xs={12}>
               <TextField

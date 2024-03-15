@@ -18,7 +18,12 @@ const LocalPartonatCreate = () => {
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(true); // Added loading indicator state
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(false);
 
   const handleToastClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -32,19 +37,20 @@ const LocalPartonatCreate = () => {
   };
 
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   }, []);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
     try {
       const response = await apiInstance.get(`user/`);
       setUserId(response.id);
+      setCurrentUSerCommune(response.commune);
     } catch (error) {
       console.log(error);
       setErrorMsg(t('Echec de trouver owner ID'));
       setToastOpen(true);
     }
-    setIsLoading(false); // Data fetching is done, set isLoading to false
+    setIsLoading(false); 
   };
 
   const handleChange = (e) => {
@@ -60,7 +66,9 @@ const LocalPartonatCreate = () => {
     formData.append('title', localPartonat.title);
     formData.append('description',localPartonat.description);
     formData.append('owner',userId);
-    formData.append('type','Economique')
+    formData.append('type','Economique');
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
+    formData.append('commune',parsedCommune);
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -95,7 +103,7 @@ const LocalPartonatCreate = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; // Show a loading indicator until data is ready
+    return <div>Loading...</div>;
   }
 
   return (
@@ -116,6 +124,12 @@ const LocalPartonatCreate = () => {
         handleCreate={handleCreate}
         modifiedLocalPartonat={localPartonat}
         handleImageUpload={handleImageUpload}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

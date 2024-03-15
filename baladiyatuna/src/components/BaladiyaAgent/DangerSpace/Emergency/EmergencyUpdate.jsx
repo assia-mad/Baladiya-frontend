@@ -5,6 +5,17 @@ import apiInstance from "../../../../../API";
 import EmergencyDetails from "./EmergencyDetails";
 import SuccessSnackbar from "../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../Tools/ErrorSnackBar";
+import algeriaCities from "../../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const EmergencyUpdate = () => {
   const { id } = useParams();
@@ -13,6 +24,10 @@ const EmergencyUpdate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -31,6 +46,12 @@ const EmergencyUpdate = () => {
       try {
         const response = await apiInstance.get(`emergencies/${id}/`);
         setModifiedEmergency(response);
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        setWilayaCode(wilayaCode);
       } catch (error) {
         console.log("Error fetching emergency data", error);
       }
@@ -61,16 +82,18 @@ const EmergencyUpdate = () => {
   };
 
   const handleUpdate = async () => {
-    const data = {
-      title: modifiedEmergency.title,
-      description: modifiedEmergency.description,
-      type: modifiedEmergency.type,
-      state: modifiedEmergency.state,
-      public: modifiedEmergency.public,
-    };
+    const formData = new FormData();
+    formData.append('title',modifiedEmergency.title);
+    formData.append('description', modifiedEmergency.description);
+    formData.append('type',modifiedEmergency.type);
+    formData.append('state',modifiedEmergency.state);
+    formData.append('public',modifiedEmergency.public);
+    if (communeCode) {
+      formData.append('commune', parseInt(communeCode, 10));
+    }
 
     try {
-      const response = await apiInstance.patch(`emergencies/${modifiedEmergency.id}/`, data);
+      const response = await apiInstance.patch(`emergencies/${modifiedEmergency.id}/`, formData);
       setModifiedEmergency(response);
       setSuccessMsg(t("Emergency updated successfully!"));
       setSuccessOpen(true);
@@ -104,6 +127,13 @@ const EmergencyUpdate = () => {
         handleSwitchChange={handleSwitchChange}
         handleUpdate={handleUpdate}
         modifiedEmergency={modifiedEmergency}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        selectedCommuneName={selectedCommuneName}
+        topicWilaya={wilayaCode}
+        setSelectedCommuneName={setSelectedCommuneName}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

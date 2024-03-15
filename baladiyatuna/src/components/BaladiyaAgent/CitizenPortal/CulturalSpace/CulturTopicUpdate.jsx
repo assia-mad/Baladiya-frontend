@@ -5,6 +5,17 @@ import SuccessSnackbar from "../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../Tools/ErrorSnackBar";
 import apiInstance from "../../../../../API";
 import CulturTopicDetails from "./CulturTopicDetails";
+import algeriaCities from "../../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 
 const CulturalTopicUpdate = () => {
@@ -15,6 +26,10 @@ const CulturalTopicUpdate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -33,7 +48,12 @@ const CulturalTopicUpdate = () => {
       try {
         const response = await apiInstance.get(`topics/${id}/`);
         setModifiedTopic(response);
-        console.log('Response:', response);
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        setWilayaCode(wilayaCode);
       } catch (error) {
         console.log('Error:', error);
       }
@@ -70,9 +90,10 @@ const CulturalTopicUpdate = () => {
     formData.append('description', modifiedTopic.description);
     if (imageFile) {
       formData.append('image', imageFile);
-    }
-
-    console.log('FormData:', formData);
+    };
+    if (communeCode){
+      formData.append('commune',parseInt(communeCode));
+    };
 
     try {
       const response = await apiInstance.patch(`topics/${modifiedTopic.id}/`, formData, {
@@ -120,6 +141,13 @@ const CulturalTopicUpdate = () => {
         handleUpdate={handleUpdate}
         modifiedTopic={modifiedTopic}
         handleImageUpload={handleImageUpload}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        selectedCommuneName={selectedCommuneName}
+        topicWilaya={wilayaCode}
+        setSelectedCommuneName={setSelectedCommuneName}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

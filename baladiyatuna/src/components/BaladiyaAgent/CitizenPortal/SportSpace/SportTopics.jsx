@@ -17,6 +17,7 @@ import DeleteDialog from '../../../Tools/DeleteDialog';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import NavigateButton from '../../../Tools/NavigationButton';
+import PrimaryColorText from '../../../Tools/Title';
 
 const Topics = () => {
   const { t } = useTranslation();
@@ -26,27 +27,30 @@ const Topics = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [ {name:t("Tous les topics"), value:"Tous les topics"},
                             {name:t("En traitement"), value:"en traitement"},
                             {name:t("Validé"), value:"validé"},
                             {name:t("Refusé"), value:"refusé"},
-                              ]
+                              ];
 
   useEffect( () =>{
     fetchData();
-  },[filter,page,searchText]);
+  },[filter,page,searchText, userData.commune]);
 
   const fetchData = async () => {
     try {
         const response = await apiInstance.get(`topics/`,{
           params: {
             page,
+            commune : userData.role === 'Admin' ? '' : userData.commune,
             state : filter === 'Tous les topics' ? '' : filter,
             type : 'Sportif',
             search: searchText,
           },
         });
-        console.log(filter,"this is the filter");
         setTopics(response?.results);
         setTotalPages(response?.total_pages);
         console.log("theeeeeeeee",response.results);
@@ -98,9 +102,9 @@ const Topics = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className='title'>
+          <PrimaryColorText className='title'>
           {t('Espace sportif')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

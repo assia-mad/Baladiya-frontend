@@ -17,6 +17,11 @@ const CreateAccompagnement = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(false);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -31,13 +36,14 @@ const CreateAccompagnement = () => {
   };
 
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   }, []);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
     try {
       const response = await apiInstance.get(`user/`);
       setUserId(response.id);
+      setCurrentUSerCommune(response.commune);
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -53,7 +59,8 @@ const CreateAccompagnement = () => {
     formData.append('title', accompagnement.title);
     formData.append('description', accompagnement.description);
     formData.append('type','Politique');
-
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
+    formData.append('commune',parsedCommune);
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -68,6 +75,13 @@ const CreateAccompagnement = () => {
       console.log(response);
       setSuccessOpen(true);
       setSuccessMsg(t('Accompagnement créé avec succès'));
+      setAccompagnement(
+        {
+          title: "",
+          description: "",
+        }
+      );
+      setImageFile(null);
     } catch (error) {
       console.log(error);
       setErrorMsg(t('Création échouée'));
@@ -107,6 +121,12 @@ const CreateAccompagnement = () => {
         handleCreate={handleCreate}
         handleImageUpload={handleImageUpload}
         modifiedAccompagnement={accompagnement}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Box } from '@mui/material';
-import { styled } from "@mui/system";
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, IconButton, useMediaQuery } from '@mui/material';
+import { styled, useTheme } from "@mui/system";
+import MenuIcon from '@mui/icons-material/Menu'; // Import the Menu icon
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -55,27 +56,29 @@ const StyledListItemText = styled(ListItemText)(({ theme }) => ({
 }));
 
 const Sidebar = ({ navigationItems }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileOpen, setMobileOpen] = React.useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
+  const handleLogout = () => {
     apiInstance.post('/logout/')
     .then(response => {
-
-      sessionStorage.removeItem('token'); 
-
+      sessionStorage.removeItem('token');
       navigate('/');
     })
     .catch(error => {
-  
-      console.error('Logout failed', error);
+      // console.error('Logout failed', error);
     });
-
   };
 
-  return (
-    <StyledDrawer anchor="left" variant="permanent">
+  const drawerContent = (
+    <React.Fragment>
       <StyledTypography variant="h5" component="div">
         BaladiyaTuna
       </StyledTypography>
@@ -97,13 +100,38 @@ const Sidebar = ({ navigationItems }) => {
             <LogoutIcon />
           </StyledListItemIcon>
           <StyledListItemText>
-            <Typography variant="body1" style={{ fontSize: '15px' }} >
+            <Typography variant="body1" style={{ fontSize: '15px' }}>
               {t("Logout")}
             </Typography>
           </StyledListItemText>
         </StyledListItem>
       </StyledList>
-    </StyledDrawer>
+    </React.Fragment>
+  );
+
+  return (
+    <React.Fragment>
+      <IconButton
+        color="inherit"
+        aria-label="open drawer"
+        edge="start"
+        onClick={handleDrawerToggle}
+        sx={{ mr: 2, display: { sm: 'block', md: 'none' } }}
+      >
+        <MenuIcon />
+      </IconButton>
+      <StyledDrawer
+        anchor="left"
+        variant={isMobile ? 'temporary' : 'permanent'}
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, 
+        }}
+      >
+        {drawerContent}
+      </StyledDrawer>
+    </React.Fragment>
   );
 };
 

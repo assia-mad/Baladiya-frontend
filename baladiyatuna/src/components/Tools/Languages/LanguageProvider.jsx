@@ -7,7 +7,7 @@ const LanguageProvider = ({ children }) => {
 
   const changeLanguage = useCallback((newLanguage) => {
     setLanguage(newLanguage);
-    setDirection(newLanguage === 'ar' ? 'rtl' : 'ltr');
+    setDirection(newLanguage === 'ar' ? 'ltr' : 'ltr');
   }, []);
 
   return (

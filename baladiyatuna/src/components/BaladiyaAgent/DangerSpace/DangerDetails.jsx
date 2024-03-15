@@ -5,6 +5,7 @@ import { useMediaQuery } from '@mui/material';
 import StateMenuSelect from '../../Tools/StateMenu';
 import apiInstance from '../../../../API';
 import MenuSelect from '../../Tools/MenuSelect';
+import PrimaryColorText from '../../Tools/Title';
 
 const DangerDetails = ({ mode, handleChange, handleSwitchChange, handleCreate, handleUpdate, modifiedDanger, handleImageUpload, setSelectedType, selectedType }) => {
   const { t } = useTranslation();
@@ -60,9 +61,9 @@ const DangerDetails = ({ mode, handleChange, handleSwitchChange, handleCreate, h
         <Grid item xs={(isMobile || mode === 'create') ? 12 : 7}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography className='title'>
+              <PrimaryColorText className='title'>
                 {t('Danger')}
-              </Typography>
+              </PrimaryColorText>
             </Grid>
             {mode === 'update' && (
               <>

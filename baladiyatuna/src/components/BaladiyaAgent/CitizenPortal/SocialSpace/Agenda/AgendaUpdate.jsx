@@ -5,6 +5,17 @@ import { useParams } from "react-router-dom";
 import SuccessSnackbar from "../../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../../Tools/ErrorSnackBar";
 import { useTranslation } from "react-i18next";
+import algeriaCities from "../../../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const AgendaUpdate = () => {
   const { id } = useParams();
@@ -14,6 +25,10 @@ const AgendaUpdate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setsuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -32,6 +47,12 @@ const AgendaUpdate = () => {
       try {
         const response = await apiInstance.get(`agendas/${id}/`);
         setModifiedAgenda(response); 
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        setWilayaCode(wilayaCode);
       } catch (error) {
         console.log('Error fetching agenda data', error);
       }
@@ -75,6 +96,9 @@ const AgendaUpdate = () => {
     formData.append('date',selectedDate.toISOString());
     if (imageFile){
         formData.append('image',imageFile);
+    }
+    if(communeCode){
+      formData.append('commune',parseInt(communeCode,10));
     }
 
     try {
@@ -122,6 +146,13 @@ const AgendaUpdate = () => {
         handleUpdate={handleUpdate}
         modifiedAgenda={modifiedAgenda}
         handleImageUpload={handleImageUpload}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        selectedCommuneName={selectedCommuneName}
+        topicWilaya={wilayaCode}
+        setSelectedCommuneName={setSelectedCommuneName}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

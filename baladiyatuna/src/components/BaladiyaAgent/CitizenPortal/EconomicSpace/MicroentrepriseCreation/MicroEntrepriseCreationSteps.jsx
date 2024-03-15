@@ -18,17 +18,19 @@ const MicroEntrepriseCreationSteps = () => {
   const [filter, setFilter] = useState('All');
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
-
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
 
   useEffect(() => {
     fetchCreationSteps();
-  }, [page, searchText, filter]);
+  }, [page, searchText, filter, userData.commune]);
 
   const fetchCreationSteps = async () => {
     try {
       const response = await apiInstance.get(`companies_creation/`, {
         params: {
           page,
+          commune: userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
           type:'Economique',
         },

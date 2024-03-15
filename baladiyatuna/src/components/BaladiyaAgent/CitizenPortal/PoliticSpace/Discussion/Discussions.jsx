@@ -8,6 +8,7 @@ import Discussion from './Discussion';
 import apiInstance from '../../../../../../API';
 import Search from '../../../../Tools/Search';
 import Filtering from '../../../../Tools/Filtering';
+import PrimaryColorText from '../../../../Tools/Title';
 
 
 const Discussions = () => {
@@ -18,22 +19,26 @@ const Discussions = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [
-    { name: 'Tous les discussions', value: 'Tous les discussions' },
-    { name: 'En traitement', value: 'en traitement' },
-    { name: 'Validé', value: 'validé' },
-    { name: 'Refusé', value: 'refusé' },
+    { name: t('Tous les discussions'), value: 'Tous les discussions' },
+    { name: t('En traitement'), value: 'en traitement' },
+    { name: t('Validé'), value: 'validé' },
+    { name: t('Refusé'), value: 'refusé' },
   ];
 
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [filter, page, searchText, userData.commune]);
 
   const fetchData = async () => {
     try {
       const response = await apiInstance.get(`discussions/`, {
         params: {
           page,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           state: filter === 'Tous les discussions' ? '' : filter,
           type: 'Politique',
           search: searchText,
@@ -89,7 +94,7 @@ const Discussions = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">{t('Discussion Politique')}</Typography>
+          <PrimaryColorText className="title">{t('Discussion Politique')}</PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

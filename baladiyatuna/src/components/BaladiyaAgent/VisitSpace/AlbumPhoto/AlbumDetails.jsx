@@ -15,6 +15,7 @@ import apiInstance from '../../../../../API';
 import LikedByList from '../../../Tools/Likes';
 import Wilayas from '../../../Tools/Wilayas';
 import StateMenuSelect from '../../../Tools/StateMenu';
+import PrimaryColorText from '../../../Tools/Title';
 
 const StyledTypography = styled(Typography)`
   font-size: 26px;
@@ -95,9 +96,9 @@ const AlbumDetails = ({
         )}
 
         <Grid item xs={isMobile ? 12 : 7}>
-          <Typography variant="h6" gutterBottom className="title">
+          <PrimaryColorText gutterBottom className="title">
             {t('Album Details')}
-          </Typography>
+          </PrimaryColorText>
           {mode === 'update' && (
             <>
               <TextField

@@ -5,6 +5,17 @@ import StudyDetails from './StudyDetails';
 import apiInstance from '../../../../API';
 import SuccessSnackbar from '../../Tools/SuccessSnackBar';
 import ErrorSnackbar from '../../Tools/ErrorSnackBar';
+import algeriaCities from "../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const StudyUpdate = () => {
   const { id } = useParams();
@@ -19,6 +30,10 @@ const StudyUpdate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -36,7 +51,12 @@ const StudyUpdate = () => {
     try {
       const response = await apiInstance.get(`studies/${id}/`);
       setModifiedStudy(response);
-      console.log('Response:', response);
+      const communeID = response.commune;
+      setSelectedCommune(communeID);
+      const communeName = getCommuneNameById(communeID);
+      setSelectedCommuneName(communeName);
+      const wilayaCode = getWilayaCodeByCommuneId(communeID);
+      setWilayaCode(wilayaCode);
     } catch (error) {
       console.log('Error:', error);
     }
@@ -53,6 +73,9 @@ const StudyUpdate = () => {
     formData.append('description', modifiedStudy.description);
     const formattedDate = selectedDate.toISOString().split('T')[0];
     formData.append('date', formattedDate);
+    if (communeCode) {
+      formData.append('commune', parseInt(communeCode, 10));
+    }
 
     try {
       const response = await apiInstance.patch(`studies/${id}/`, formData, {
@@ -96,6 +119,13 @@ const StudyUpdate = () => {
       handleChange={handleChange}
       handleUpdate={handleUpdate}
       modifiedStudy={modifiedStudy}
+      selectedCommune={selectedCommune}
+      setSelectedCommune={setSelectedCommune}
+      selectedCommuneName={selectedCommuneName}
+      topicWilaya={wilayaCode}
+      setSelectedCommuneName={setSelectedCommuneName}
+      communeCode={communeCode}
+      setCommuneCode={setCommuneCode}
     />
     </>
   );

@@ -5,6 +5,17 @@ import { useParams } from "react-router-dom";
 import SuccessSnackbar from "../../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../../Tools/ErrorSnackBar";
 import { useTranslation } from "react-i18next";
+import algeriaCities from "../../../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const ActivityUpdate = () => {
   const { id } = useParams();
@@ -13,6 +24,10 @@ const ActivityUpdate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -31,6 +46,12 @@ const ActivityUpdate = () => {
       try {
         const response = await apiInstance.get(`activities/${id}/`);
         setModifiedActivity(response);
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        setWilayaCode(wilayaCode);
       } catch (error) {
         console.log('Error fetching activity data', error);
       }
@@ -61,16 +82,19 @@ const ActivityUpdate = () => {
   };
 
   const handleUpdate = async (selectedDate) => {
-    const data = {
-      title: modifiedActivity.title,
-      description: modifiedActivity.description,
-      date: selectedDate.toISOString(),
-      localisation: modifiedActivity.localisation,
-      directed_by: modifiedActivity.directed_by, 
-    };
+    const formData = new FormData();
+
+    formData.append('title', modifiedActivity.title);
+    formData.append('description', modifiedActivity.description);
+    formData.append('date', selectedDate.toISOString());
+    formData.append('localisation', modifiedActivity.localisation);
+    formData.append('directed_by', modifiedActivity.directed_by);
+    if (communeCode){
+      formData.append('commune',parseInt(communeCode,10));
+    }
 
     try {
-      const response = await apiInstance.patch(`activities/${modifiedActivity.id}/`, data);
+      const response = await apiInstance.patch(`activities/${modifiedActivity.id}/`, formData);
       setModifiedActivity(response);
       setSuccessMsg(t('La modification a réussi!'));
       setSuccessOpen(true);
@@ -96,6 +120,13 @@ const ActivityUpdate = () => {
         handleSwitchChange={handleSwitchChange}
         handleUpdate={handleUpdate}
         modifiedActivity={modifiedActivity}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        selectedCommuneName={selectedCommuneName}
+        topicWilaya={wilayaCode}
+        setSelectedCommuneName={setSelectedCommuneName}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

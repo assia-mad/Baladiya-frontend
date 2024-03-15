@@ -9,6 +9,7 @@ import apiInstance from '../../../../../API';
 import Search from '../../../Tools/Search';
 import Filtering from '../../../Tools/Filtering';
 import NavigateButton from '../../../Tools/NavigationButton';
+import PrimaryColorText from '../../../Tools/Title';
 
 const Products = () => {
   const { t } = useTranslation();
@@ -18,22 +19,25 @@ const Products = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
   const filterItemslist = [ 
     {name:t("Tous les Produits"), value:"Tous les Produits"},
     {name:t("Vente"), value:"Vente"},
     {name:t("Allocation"), value:"Allocation"},
     {name:t("Echange"), value:"Echange"},
-    ]
+    ];
 
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [userData.commune,filter, page, searchText]);
 
   const fetchData = async () => {
     try {
       const response = await apiInstance.get(`products/`, {
         params: {
           page,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           action_type: filter === 'Tous les Produits' ? '' : filter,
           search: searchText,
         },
@@ -87,9 +91,9 @@ const Products = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className='title'>
+          <PrimaryColorText className='title'>
             {t('Products')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
         <Box display="flex" alignItems="center" mb={2}>

@@ -9,6 +9,7 @@ import apiInstance from '../../../../../../API';
 import Search from '../../../../Tools/Search';
 import Filtering from '../../../../Tools/Filtering';
 import NavigateButton from '../../../../Tools/NavigationButton';
+import PrimaryColorText from '../../../../Tools/Title';
 
 const LocalPatronats = () => {
   const { t } = useTranslation();
@@ -18,6 +19,9 @@ const LocalPatronats = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [
     { name: t('Tous les utilisateurs'), value: 'Tous les utilisateurs' },
     { name: t('APC'), value: 'Agent' },
@@ -27,13 +31,14 @@ const LocalPatronats = () => {
 
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [filter, page, searchText, userData.commune]);
 
   const fetchData = async () => {
     try {
       const response = await apiInstance.get(`discussions/`, {
         params: {
           page,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           state: filter === 'Tous les utilisateurs' ? '' : filter,
           type: 'Economique',
           search: searchText,
@@ -76,7 +81,7 @@ const LocalPatronats = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">{t('Patronat Local')}</Typography>
+          <PrimaryColorText className="title">{t('Patronat Local')}</PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

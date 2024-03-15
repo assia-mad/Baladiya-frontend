@@ -5,6 +5,17 @@ import apiInstance from "../../../../API";
 import ActualityDetails from "./AcutalityDetails"; 
 import SuccessSnackbar from "../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../Tools/ErrorSnackBar";
+import algeriaCities from "../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const ActualityUpdate = () => {
   const { id } = useParams();
@@ -14,6 +25,10 @@ const ActualityUpdate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -32,6 +47,12 @@ const ActualityUpdate = () => {
       try {
         const response = await apiInstance.get(`actualities/${id}/`);
         setModifiedActuality(response);
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        setWilayaCode(wilayaCode);
       } catch (error) {
         console.log('Error fetching actuality data', error);
       }
@@ -69,7 +90,10 @@ const ActualityUpdate = () => {
     formData.append('date',selectedDate.toISOString());
     if (file){
         formData.append('file', file);
-    }
+    };
+    if (communeCode){
+      formData.append('commune',parseInt(communeCode));
+    };
 
     try {
       const response = await apiInstance.patch(`actualities/${modifiedActuality.id}/`, formData, {
@@ -117,6 +141,13 @@ const ActualityUpdate = () => {
         handleUpdate={handleUpdate}
         modifiedActuality={modifiedActuality}
         handleFileUpload={handleFileUpload}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        selectedCommuneName={selectedCommuneName}
+        topicWilaya={wilayaCode}
+        setSelectedCommuneName={setSelectedCommuneName}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

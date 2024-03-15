@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -9,6 +10,8 @@ import {
     Tooltip,
     Legend,
   } from 'chart.js';
+  import { useTranslation } from 'react-i18next';
+  import apiInstance from '../../../../API';
   
   ChartJS.register(
     CategoryScale,
@@ -19,14 +22,16 @@ import {
     Legend
   );
 
+
   
 
 const BarChart = () => {
-  const data = {
+  const { t } = useTranslation();
+  const [chartData, setChartData] = useState({
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
     datasets: [
       {
-        label: '# of Votes',
+        label: t('Nombre des utilisateurs'),
         data: [12, 19, 3, 5, 2, 3],
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
@@ -47,9 +52,30 @@ const BarChart = () => {
         borderWidth: 1,
       },
     ],
+  });
+
+  const fetchData = async () => {
+    try {
+      const response = await apiInstance.get('stats_users/');
+      const data = response;
+      setChartData({
+        ...chartData,
+        labels: data.users_by_role.map(item => item.role),
+        datasets: [{
+          ...chartData.datasets[0],
+          data: data.users_by_role.map(item => item.total)
+        }]
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
-  return <Bar data={data} />;
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return <Bar data={chartData} />;
 };
 
 export default BarChart;

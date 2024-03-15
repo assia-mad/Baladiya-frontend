@@ -63,9 +63,6 @@ const Agenda = ({ agendas, onEdit, onDelete, onValidate }) => {
         <Typography>{item.localisation}</Typography>
       </>
     )},
-    { label: t('Etat'), dataKey: 'state', render: (item) => (
-      <StateCell state={item.state}>{item.state}</StateCell>
-    )},
     { label: t('Action'), render: (item) => (
       <>
         <IconButton
@@ -83,12 +80,6 @@ const Agenda = ({ agendas, onEdit, onDelete, onValidate }) => {
           <DeleteIcon />
         </IconButton>
       </>
-    )},
-    { label: 'Valider', render: (item) => (
-      <StateMenuSelect
-        currentState={item.state}
-        onChangeState={(newState) => handleSwitchChange(item.id, newState)}
-      />
     )},
   ];
 

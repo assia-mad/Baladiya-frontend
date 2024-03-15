@@ -217,14 +217,22 @@
     "utilisateurs":"users",
     "Personne":"Person",
     "Offre de Publicité":"Publicity Offer",
-    "Offre de Publicités":"Publicity Offers",
+    "Offres de Publicités":"Publicity Offers",
     "Date début":"Start Date",
     "Date fin":"End Date",
     "Lien":"Link",
     "Publicité":"Publicity",
     "Espace publicités":"Advertising Space",
     "Toutes les publicités":"All Advertisements",
-    "Type de Rencontre":"Type of Meeting"
+    "Type de Rencontre":"Type of Meeting",
+    "Population":"Population",
+    "Changer Image":"Change Image",
+    "Tous les discussions":"All Discussions",
+    "télécharger un fichier (video/image)":"download a file (video/image)",
+    "Document":"Document",
+    "Informations Utilisateur":"User Information",
+    "Votre email a été correctement confirmé":"Your email has been successfully confirmed",
+    "Nombre des utilisateurs":"Number of users"
 
     
    

@@ -60,11 +60,11 @@ const StyledAppBar = styled(AppBar)({
   })
   
   const NavigationBar = () => {
-    const [userImage, setUserImage]= useState('');
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const storedApiEndpoint = sessionStorage.getItem('apiEndpoint');
     const token = sessionStorage.getItem('token');
-    const [userRole, setUserRole] = useState('');
+    const userDataString = localStorage.getItem('user');
+    const userData = JSON.parse(userDataString);
     const navigate = useNavigate();
     const { t } = useTranslation();
 
@@ -95,19 +95,19 @@ const StyledAppBar = styled(AppBar)({
       })
     };
 
-    const fetchUSer = async () =>{
-        try {
-            const response = await apiInstance.get(`user/`);
-            console.log('fetching the user', response);
-            setUserImage(response?.image);
-            setUserRole(response.role);
-        } catch(error){
-            console.log(error);
-        }
-    }
-    useEffect(() =>{
-        fetchUSer();
-    },[userImage]);
+    // const fetchUSer = async () =>{
+    //     try {
+    //         const response = await apiInstance.get(`user/`);
+    //         console.log('fetching the user', response);
+    //         setUserImage(response?.image);
+    //         setUserRole(response.role);
+    //     } catch(error){
+    //         console.log(error);
+    //     }
+    // }
+    // useEffect(() =>{
+    //     fetchUSer();
+    // },[userImage]);
 
     return (
         <>
@@ -116,17 +116,18 @@ const StyledAppBar = styled(AppBar)({
             <IconButton className="menu-icon" onClick={handleMenuIconClick}><MenuRoundedIcon color="primary" /></IconButton>
             <StyledAvatarContainer>
               <div>
+                <StyledLink to="/home">{t("Home")}</StyledLink>
                 <StyledLink to="/about">{t("About")}</StyledLink>
                 <StyledLink to="/manage_users">{t("Gérer")}</StyledLink>
                 <LanguageSelector/>
               </div>
               <Link to="/profile">
-                <StyledAvatar alt="User Avatar" src={userImage} />
+                <StyledAvatar alt="User Avatar" src={userData.image} />
               </Link>
             </StyledAvatarContainer>
           </StyledToolbar>
         </StyledAppBar>
-        <CollapsibleLeftNavigator isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} userRole={userRole} />
+        <CollapsibleLeftNavigator isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} userRole={userData.role} />
         </>
     );
   };

@@ -38,6 +38,7 @@ const VisitDetails = ({
   const [ownerName, setOwnerName] = useState('');
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
   const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const fetchOwnerName = async () => {
     try {
@@ -47,12 +48,24 @@ const VisitDetails = ({
     console.log('Error fetching owner name', error);
   }
 };
+
+const fetchCurrentUser = async () => {
+  try{
+    const response = await apiInstance.get(`user/`);
+    setIsAdmin(response.role==='Admin');
+  } catch(error){
+
+  }
+};
   
-{mode === "update" &&
+
   useEffect(() => {
-    fetchOwnerName();
+    {mode === "update" &&
+      fetchOwnerName();
+  }
+   fetchCurrentUser();
   }, [modifiedVisit.owner]);
-}
+
 const handleSelectWilaya = (wilayaCode) => {
   setWilayaCode(wilayaCode);
   setSelectedCommune(null); 
@@ -133,6 +146,16 @@ const handleSelectCommune = (id, name) => {
                 disabled
               />
             </>
+          )}
+          {isAdmin && (
+            <>
+              <Grid item xs={6}>
+                  <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+              </Grid>
+              <Grid item xs={6}>
+                <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+              </Grid>
+              </>
           )}
           {['title', 'description'].map((field) => (
             <TextField

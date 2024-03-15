@@ -14,6 +14,7 @@ import apiInstance from '../../../../../API';
 import Search from '../../../Tools/Search';
 import Filtering from '../../../Tools/Filtering';
 import NavigateButton from '../../../Tools/NavigationButton';
+import PrimaryColorText from '../../../Tools/Title';
 
 const Emergencies = () => {
   const { t } = useTranslation();
@@ -25,6 +26,9 @@ const Emergencies = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+  
   const filterTypeList = [
     { name: t('Tous les types'), value: 'Tous les types' },
     { name: t('Gaz'), value: 'Gaz' },
@@ -44,7 +48,9 @@ const Emergencies = () => {
 
   useEffect(() => {
     fetchData();
-  }, [filterType, filterPublic, page, searchText]);
+  }, [filterType, filterPublic, page, searchText, userData.commune]);
+
+
 
   const fetchData = async () => {
     try {
@@ -54,6 +60,7 @@ const Emergencies = () => {
           type: filterType === 'Tous les types' ? '' : filterType,
           public: filterPublic === 'Publique' ? '' : filterPublic,
           state: filter === 'Tous les urgences'? '':filter,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
         },
       });
@@ -113,19 +120,20 @@ const Emergencies = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className='title'>
+          <PrimaryColorText className='title'>
             {t('Emergencies')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>
             <NavigateButton page={'/emergency'} />
-            <Box ml={10}>
+            <Box ml={5}>
               <Filtering
                 filter={filterType}
                 onFilterChange={handleFilterTypeChange}
                 filteritems={filterTypeList}
               />
+            </Box>
               <Filtering
                 filter={filterPublic}
                 onFilterChange={handleFilterPublicChange}
@@ -136,7 +144,7 @@ const Emergencies = () => {
                 onFilterChange={handleFilterStatecChange}
                 filteritems={filterItemslist}
               />
-            </Box>
+
             <Search setSearchText={setSearchText} searchText={searchText} fetchData={fetchData} />
           </Box>
         </Grid>

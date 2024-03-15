@@ -84,10 +84,10 @@ const Login = () => {
       console.log('token is', token);
       setToken(token);
       setLoggedIn(true);
-      console.log(token);
-
       apiInstance.get(`user/`).then(response => {
-        console.log(response);
+          
+        const userData = response;
+        localStorage.setItem('user', JSON.stringify(userData))
         
         if (response.role === "Admin") {
           navigate('/admin-home');
@@ -106,7 +106,7 @@ const Login = () => {
 
       }).catch(error => {
         console.log("error to get user data", error);
-        const errorMessage = error.response.data.detail || t('Une erreur s\'est produite lors de la récupération des données utilisateur');
+        const errorMessage = error.response.detail || t('Une erreur s\'est produite lors de la récupération des données utilisateur');
         setError(errorMessage); 
         setOpenErrorSnackbar(true);
       });
@@ -114,14 +114,14 @@ const Login = () => {
       console.log("erreeeeeeeeeeeeeeeeeur to login", error);
       console.error("error to login", error);
       if (error.response) {
-        if (error.response.data.email) {
-          setEmailError(error.response.data.email.join(' '));
+        if (error.response.email) {
+          setEmailError(error.response.email.join(' '));
         }
-        else if (error.response.data.password) {
-          setPasswordError(error.response.data.password.join(' '));
+        else if (error.response.password) {
+          setPasswordError(error.response.password.join(' '));
         }
-        else if (error.response.data.non_field_errors[0]){
-          const errorMessage = error.response.data.non_field_errors[0] || t('Une erreur s\'est produite lors de la connexion.');
+        else if (error.response.non_field_errors[0]){
+          const errorMessage = error.response.non_field_errors[0] || t('Une erreur s\'est produite lors de la connexion.');
           setError(errorMessage);
           setOpenErrorSnackbar(true); 
         }

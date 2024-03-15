@@ -28,6 +28,9 @@ const Studies = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [
     { name: t('Toutes les études'), value: 'Toutes les études' },
     { name: t('Crée par Apc'), value: 'Agent' },
@@ -40,20 +43,21 @@ const Studies = () => {
         params: {
           page,
           owner__role: filter === 'Toutes les études' ? '' : filter,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
         },
       });
       setStudies(response?.results);
-      console.log("stuuuuuuuuuuuuuuuuuuuudies",response.results);
       setTotalPages(response?.total_pages);
     } catch (error) {
       console.log('error', error);
     }
   };
 
+
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [filter, page, searchText, userData.commune]);
 
   const handleEdit = (studyId) => {
     navigate(`/studies/${studyId}`);

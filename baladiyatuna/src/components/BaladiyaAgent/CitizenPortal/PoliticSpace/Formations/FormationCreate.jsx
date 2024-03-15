@@ -19,6 +19,11 @@ const FormationCreate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setsuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -32,13 +37,14 @@ const FormationCreate = () => {
   };
   
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   },[]);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
       try {
         const response = await apiInstance.get(`user/`);
         setUserId(response.id);
+        setCurrentUSerCommune(response.commune);
       }catch(error){
         console.log(error); 
         setErrorMsg(t('Echec de trouver owner ID'));
@@ -56,11 +62,15 @@ const FormationCreate = () => {
 
 
   const handleCreate = async (selectedDate) => {
+    
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
+      
     const data = {
       title: formation.title,
       description: formation.description,
       date: selectedDate.toISOString(), 
       localisation: formation.localisation,
+      commune : parsedCommune,
       owner: userId,
       type:'Politique'
     };
@@ -103,6 +113,12 @@ const FormationCreate = () => {
       handleChange={handleChange}
       handleCreate={handleCreate}
       modifiedFormation={formation}
+      selectedCommune={selectedCommune}
+      setSelectedCommune={setSelectedCommune}
+      setSelectedCommuneName={setSelectedCommuneName}
+      topicWilaya={wilayaCode}
+      communeCode={communeCode}
+      setCommuneCode={setCommuneCode}
     />
     </>
   );

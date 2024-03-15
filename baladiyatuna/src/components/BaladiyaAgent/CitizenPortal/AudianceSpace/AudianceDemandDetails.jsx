@@ -6,6 +6,7 @@ import { useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import apiInstance from '../../../../../API';
 import StateMenuSelect from '../../../Tools/StateMenu';
+import PrimaryColorText from '../../../Tools/Title';
 
 const meet_types = [
     { value: 'Privé', label: 'Privé' },
@@ -48,9 +49,9 @@ const AudienceDemandDetails = ({ mode, handleChange, handleSwitchChange, handleU
                 <Grid item xs={12}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography className='title'>
+                            <PrimaryColorText className='title'>
                                 {t('Demande Audience')}
-                            </Typography>
+                            </PrimaryColorText>
                         </Grid>
                         {mode === 'update' &&
                             <>

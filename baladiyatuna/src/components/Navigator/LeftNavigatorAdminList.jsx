@@ -10,6 +10,8 @@ import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import WarningIcon from '@mui/icons-material/Warning';
 import BallotIcon from '@mui/icons-material/Ballot';
+import CampaignIcon from '@mui/icons-material/Campaign';
+
 
 const LeftNavigatorAdminList = () => {
     const { t } = useTranslation();
@@ -58,6 +60,14 @@ const LeftNavigatorAdminList = () => {
         text: t('Espace Etudes'),
         icon: <BallotIcon />,
         onClick: () => navigate('/studies')
+      },
+      {
+        text: t('Espace publicités'),
+        icon: <CampaignIcon />,
+        onClick: (event) => handleMenuOpen(event, [
+            { label: t('Offres de Publicités'), path: '/publicity_offers' },
+            { label: t('Publicités'), path: '/publicities' },
+          ])
       },
       
   ];

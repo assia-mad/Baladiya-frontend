@@ -10,6 +10,7 @@ import Filtering from "../../../../Tools/Filtering";
 import PaginationItem from "../../../../Tools/Pagination";
 import apiInstance from "../../../../../../API";
 import NavigateButton from "../../../../Tools/NavigationButton";
+import PrimaryColorText from "../../../../Tools/Title";
 
 const Accompagnements = () => {
 
@@ -20,6 +21,9 @@ const Accompagnements = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchText, setSearchText] = useState('');
+    const userDataString = localStorage.getItem('user');
+    const userData = JSON.parse(userDataString);
+
     const filterItemslist = [ {name:t("Tous les utilisateurs"), value:"Tous les utilisateurs"},
                               {name:t("Créer par APC"), value:"Agent"},
                               {name:t("Créer par Administrateur"), value:"Admin"},
@@ -27,7 +31,7 @@ const Accompagnements = () => {
   
     useEffect( () => {
       fetchData();
-    },[filter,page,searchText]);
+    },[filter,page,searchText, userData.commune]);
   
     const fetchData = async () => {
       try {
@@ -35,6 +39,7 @@ const Accompagnements = () => {
             params: {
               page,
               type: 'Politique',
+              commune : userData.role === 'Admin' ? '' : userData.commune,
               owner__role : filter === 'Tous les utilisateurs' ? '' : filter,
               search: searchText,
             },
@@ -90,9 +95,9 @@ const Accompagnements = () => {
           <CheckCircle />
         </Avatar>
           <Grid item>
-            <Typography className='title'>
+            <PrimaryColorText className='title'>
             {t ('Accompagnements')}
-            </Typography>
+            </PrimaryColorText>
           </Grid>
           <Grid item>
             <Box display="flex" alignItems="center" mb={2}>

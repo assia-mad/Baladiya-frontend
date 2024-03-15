@@ -5,24 +5,58 @@ import StateMenuSelect from '../../../../Tools/StateMenu';
 import apiInstance from '../../../../../../API';
 import { useMediaQuery } from '@mui/material';
 import Comment from '../../../../Comments/Comment';
+import PrimaryColorText from '../../../../Tools/Title';
+import Wilayas from '../../../../Tools/Wilayas';
+import Communes from '../../../../Tools/Communes';
 
-const DiscussionDetails = ({ modifiedDiscussion, comments, handleSwitchChange }) => {
+const DiscussionDetails = ({ modifiedDiscussion,
+   comments,
+    handleSwitchChange,
+    selectedCommune,
+    setSelectedCommune,
+    topicWilaya,
+    setCommuneCode,
+    communeCode,
+    setSelectedCommuneName,
+}) => {
   const { t } = useTranslation();
   const [ownerName, setOwnerName] = useState('');
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const fetchOwnerName = async () => {
+    try {
+      const response = await apiInstance.get(`/manage_users/${modifiedDiscussion.owner}/`);
+      setOwnerName(response?.first_name + ' ' + response?.last_name);
+    } catch (error) {
+      console.log('Error fetching owner name', error);
+    }
+  };
+
+  const fetchCurrentUser = async () => {
+    try{
+      const response = await apiInstance.get(`user/`);
+      setIsAdmin(response.role==='Admin');
+    } catch(error){
+
+    }
+};
 
   useEffect(() => {
-    const fetchOwnerName = async () => {
-      try {
-        const response = await apiInstance.get(`/manage_users/${modifiedDiscussion.owner}/`);
-        setOwnerName(response?.first_name + ' ' + response?.last_name);
-      } catch (error) {
-        console.log('Error fetching owner name', error);
-      }
-    };
-
     fetchOwnerName();
+    fetchCurrentUser();
   }, [modifiedDiscussion.owner]);
+
+  const handleSelectWilaya = (wilayaCode) => {
+    setWilayaCode(wilayaCode);
+    setSelectedCommune(null); 
+  };
+
+  const handleSelectCommune = (id, name) => {
+    setCommuneCode(id);
+    setSelectedCommuneName(name);
+  };
 
   return (
     <Paper elevation={3} style={{ padding: '20px', margin: '80px' }}>
@@ -49,8 +83,8 @@ const DiscussionDetails = ({ modifiedDiscussion, comments, handleSwitchChange })
                 src={modifiedDiscussion.image}
                 alt="discussion image"
                 style={{
-                  width: '100%', // Fixed width
-                  height: '100%', // Fixed height
+                  width: '100%',
+                  height: '100%',
                   borderRadius: '8px',
                   objectFit: 'cover',
                 }}
@@ -59,16 +93,25 @@ const DiscussionDetails = ({ modifiedDiscussion, comments, handleSwitchChange })
           </div>
         </Grid>
         <Grid item xs={isMobile ? 12 : 7}>
-          <Typography variant="h6" gutterBottom className='title'>
+          <PrimaryColorText className='title'>
             {t('Discussion Politique')}
-          </Typography>
+          </PrimaryColorText>
           <TextField name="date" label={t('date')} fullWidth value={modifiedDiscussion.created_at} margin="normal" />
           <TextField name="owner" label={t('Propriétaire')} fullWidth value={ownerName} margin="normal" />
+          {isAdmin && (
+            <>
+              <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+              <Box mt={2}>
+                <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+              </Box>
+          </>
+          )}
           <TextField name="title" label={t('Titre')} fullWidth value={modifiedDiscussion.title} margin="normal" />
           <TextField
             name="description"
             label={t('Description')}
             multiline
+            rows={4}
             fullWidth
             value={modifiedDiscussion.description}
             margin="normal"
@@ -77,9 +120,9 @@ const DiscussionDetails = ({ modifiedDiscussion, comments, handleSwitchChange })
         </Grid>
       </Grid>
       <Box mt={3}>
-        <Typography variant="h6" gutterBottom className='title'>
+        <PrimaryColorText gutterBottom className='title'>
           Comments
-        </Typography>
+        </PrimaryColorText>
         {comments.map((comment) => (
           <Comment key={comment.id} comment={comment} />
         ))}

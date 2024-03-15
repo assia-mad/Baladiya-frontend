@@ -18,6 +18,11 @@ const EcologicalInformationCreate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setsuccessMsg] = useState("");
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(false);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -32,13 +37,14 @@ const EcologicalInformationCreate = () => {
   };
 
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   }, []);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
     try {
       const response = await apiInstance.get(`user/`);
       setUserId(response.id);
+      setCurrentUSerCommune(response.commune);
     } catch (error) {
       console.log(error);
       setErrorMsg(t("Echec de trouver owner ID"));
@@ -60,6 +66,8 @@ const EcologicalInformationCreate = () => {
     formData.append('description', ecologicalInformation.description);
     formData.append('type', ecologicalInformation.type);
     formData.append('owner', userId);
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
+    formData.append('commune',parsedCommune);
     
     if (imageFile) {
       formData.append('image', imageFile);
@@ -68,7 +76,12 @@ const EcologicalInformationCreate = () => {
     try {
       const response = await apiInstance.post(
         `ecological_informations/`,
-        formData
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data', 
+          },
+        }
       );
       setSuccessOpen(true);
       setsuccessMsg(t("La creation a réussi!"));
@@ -110,6 +123,12 @@ const EcologicalInformationCreate = () => {
         handleCreate={handleCreate}
         modifiedEcologicalInformation={ecologicalInformation}
         handleImageUpload={handleImageUpload}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

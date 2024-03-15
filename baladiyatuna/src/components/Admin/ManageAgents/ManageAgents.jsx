@@ -41,7 +41,7 @@ const ManageAgents = () => {
     const fetchData = async () => {
       try {
         const response = await apiInstance.get(
-          `manage_users/`,
+          `manage_agents/`,
           {
             params: {
               page,

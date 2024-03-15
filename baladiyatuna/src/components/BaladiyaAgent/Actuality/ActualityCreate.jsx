@@ -20,6 +20,11 @@ const ActualityCreate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(false);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -34,13 +39,14 @@ const ActualityCreate = () => {
   };
 
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   }, []);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
     try {
       const response = await apiInstance.get(`user/`);
       setUserId(response.id);
+      setCurrentUSerCommune(response.id);
     } catch (error) {
       console.log(error);
       setErrorMsg(t('Echec de trouver owner ID'));
@@ -64,6 +70,8 @@ const ActualityCreate = () => {
     formData.append('description', actuality.description);
     formData.append('type', actuality.type);
     formData.append('date',selectedDate.toISOString());
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
+    formData.append('commune',parsedCommune);
     if (file) {
       formData.append('file', file);
     }
@@ -108,6 +116,12 @@ const ActualityCreate = () => {
         handleCreate={handleCreate}
         handleFileUpload={handleFileUpload}
         modifiedActuality={actuality}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

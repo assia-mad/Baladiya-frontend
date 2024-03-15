@@ -5,6 +5,17 @@ import { useParams } from "react-router-dom";
 import SuccessSnackbar from "../../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../../Tools/ErrorSnackBar";
 import { useTranslation } from "react-i18next";
+import algeriaCities from "../../../../../../dzData.json";
+
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const DiscussionDetailsComponent = () => {
   const { id } = useParams();
@@ -15,6 +26,10 @@ const DiscussionDetailsComponent = () => {
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setsuccessMsg] = useState('');
   const [comments, setComments] = useState([]);
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -31,7 +46,13 @@ const DiscussionDetailsComponent = () => {
     const fetchDiscussionData = async () => {
       try {
         const response = await apiInstance.get(`discussions/${id}/`);
-        setModifiedDiscussion(response); 
+        setModifiedDiscussion(response);
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        setWilayaCode(wilayaCode);
         console.log('Response:', response);
       } catch (error) {
         console.log('Error:', error);
@@ -79,9 +100,12 @@ const DiscussionDetailsComponent = () => {
     const formData = new FormData();
     formData.append('title', modifiedDiscussion.title);
     formData.append('description', modifiedDiscussion.description);
+    if(communeCode){
+        formData.append('commune',parseInt(communeCode,10));
+    };
     if (imageFile) {
       formData.append('image', imageFile);
-    }
+    };
 
     console.log('FormData:', formData);
 
@@ -131,6 +155,13 @@ const DiscussionDetailsComponent = () => {
       modifiedDiscussion={modifiedDiscussion}
       handleImageUpload={handleImageUpload}
       comments={comments}
+      selectedCommune={selectedCommune}
+      setSelectedCommune={setSelectedCommune}
+      selectedCommuneName={selectedCommuneName}
+      topicWilaya={wilayaCode}
+      setSelectedCommuneName={setSelectedCommuneName}
+      communeCode={communeCode}
+      setCommuneCode={setCommuneCode}
     />
     </>
   );

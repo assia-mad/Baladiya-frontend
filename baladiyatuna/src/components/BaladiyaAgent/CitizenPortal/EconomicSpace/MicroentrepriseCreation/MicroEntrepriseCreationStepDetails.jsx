@@ -6,37 +6,72 @@ import { useTranslation } from 'react-i18next';
 import apiInstance from '../../../../../../API';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import PrimaryColorText from '../../../../Tools/Title';
+import Wilayas from "../../../../Tools/Wilayas";
+import Communes from "../../../../Tools/Communes";
 
-const MicroEntrepriseCreationStepDetails = ({ mode, handleChange, handleSave, creationStepData }) => {
+const MicroEntrepriseCreationStepDetails = ({ mode,
+  handleChange, 
+  handleSave, 
+  creationStepData,
+  selectedCommune,
+  setSelectedCommune,
+  topicWilaya,
+  setCommuneCode,
+  communeCode,
+  setSelectedCommuneName, }) => {
   const [ownerName, setOwnerName] = useState('');
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-
-  const fetchOwnerName = async () => {
-    try {
-      const response = await apiInstance.get(`/manage_users/${creationStepData.owner}/`);
-      setOwnerName(`${response.first_name} ${response.last_name}`);
-    } catch (error) {
-      console.error('Error fetching owner name', error);
-    }
-  };
   useEffect(() => {
-    if (mode === 'update') {
-      fetchOwnerName();
-    }
-  }, [mode, creationStepData.owner]);
+    if (mode === "update") {
+    fetchOwnerName();
+    };
+    fetchCurrentUser();
+  }, [creationStepData.owner]);
 
-  const handleRangChange = (value) => {
-    handleChange({
-      target: {
-        name: 'rang',
-        value: value >= 0 ? value : 0,
-      },
-    });
-  };
 
+const fetchOwnerName = async () => {
+  try {
+    const response = await apiInstance.get(
+      `/manage_users/${creationStepData.owner}/`
+    );
+    setOwnerName(
+      response?.first_name + " " + response?.last_name
+    );
+  } catch (error) {
+    console.log("Error fetching owner name", error);
+  }
+};
+
+const fetchCurrentUser = async () => {
+  try{
+    const response = await apiInstance.get(`user/`);
+    setIsAdmin(response.role==='Admin');
+  } catch(error){
+
+  }
+};
+const handleSelectWilaya = (wilayaCode) => {
+  setWilayaCode(wilayaCode);
+  setSelectedCommune(null); 
+};
+
+const handleSelectCommune = (id, name) => {
+  setCommuneCode(id);
+  setSelectedCommuneName(name);
+};
+const handleRangChange = (value) => {
+  handleChange({
+    target: {
+      name: 'rang',
+      value: value >= 0 ? value : 0,
+    },
+  });
+};
   return (
     <Box
       display="flex"
@@ -74,6 +109,16 @@ const MicroEntrepriseCreationStepDetails = ({ mode, handleChange, handleSave, cr
               </Grid>
             </>
           )}
+          {isAdmin && (
+              <>
+              <Grid item xs={6}>
+                <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+              </Grid>
+              <Grid item xs={6}>
+                <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+              </Grid>
+            </>
+            )}
           <Grid item xs={12} sm={6}>
             <TextField
               name="rang"

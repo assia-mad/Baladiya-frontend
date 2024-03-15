@@ -17,6 +17,11 @@ const EmergencyCreate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -31,13 +36,14 @@ const EmergencyCreate = () => {
   };
 
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   }, []);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
     try {
       const response = await apiInstance.get(`user/`);
       setUserId(response.id);
+      setCurrentUSerCommune(response.commune);
     } catch (error) {
       console.log(error);
       setErrorMsg(t("Failed to fetch owner ID"));
@@ -54,11 +60,13 @@ const EmergencyCreate = () => {
   };
 
   const handleCreate = async () => {
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
     const data = {
       title: emergency.title,
       description: emergency.description,
       type: emergency.type,
       public: emergency.public,
+      commune : parsedCommune,
       owner: userId,
     };
 
@@ -96,6 +104,12 @@ const EmergencyCreate = () => {
         handleChange={handleChange}
         handleCreate={handleCreate}
         modifiedEmergency={emergency}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

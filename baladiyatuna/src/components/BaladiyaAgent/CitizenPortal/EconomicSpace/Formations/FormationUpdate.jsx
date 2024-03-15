@@ -5,7 +5,17 @@ import { useParams } from "react-router-dom";
 import SuccessSnackbar from "../../../../Tools/SuccessSnackBar";
 import ErrorSnackbar from "../../../../Tools/ErrorSnackBar";
 import apiInstance from "../../../../../../API";
+import algeriaCities from "../../../../../../dzData.json";
 
+const getCommuneNameById = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.commune_name_ascii : '';
+};
+
+const getWilayaCodeByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_code : null;
+};
 
 const EconomicFormationUpdate= () => {
   const { id } = useParams();
@@ -14,6 +24,10 @@ const EconomicFormationUpdate= () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setsuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -32,6 +46,12 @@ const EconomicFormationUpdate= () => {
       try {
         const response = await apiInstance.get(`formations/${id}/`);
         setModifiedFormation(response); 
+        const communeID = response.commune;
+        setSelectedCommune(communeID);
+        const communeName = getCommuneNameById(communeID);
+        setSelectedCommuneName(communeName);
+        const wilayaCode = getWilayaCodeByCommuneId(communeID);
+        setWilayaCode(wilayaCode);
       } catch (error) {
         console.log('Error fetching formation data', error);
       }
@@ -49,15 +69,19 @@ const EconomicFormationUpdate= () => {
   };
 
   const handleUpdate = async (selectedDate) => {
-    const data = {
-      title: modifiedFormation.title,
-      description: modifiedFormation.description,
-      date: selectedDate.toISOString(), 
-      localisation: modifiedFormation.localisation,
+
+    const formData = new FormData();
+
+    formData.append('title', modifiedFormation.title);
+    formData.append('description', modifiedFormation.description);
+    formData.append('date', selectedDate.toISOString());
+    formData.append('localisation', modifiedFormation.localisation);
+    if (communeCode){
+      formData.append('commune',parseInt(communeCode));
     };
     
     try {
-      const response = await apiInstance.patch(`formations/${modifiedFormation.id}/`, data);
+      const response = await apiInstance.patch(`formations/${modifiedFormation.id}/`, formData);
       setModifiedFormation(response);
       setsuccessMsg(t('formation modifiée avec succés!'));
       setSuccessOpen(true);
@@ -90,6 +114,13 @@ const EconomicFormationUpdate= () => {
       handleChange={handleChange}
       handleUpdate={handleUpdate}
       modifiedFormation={modifiedFormation}
+      selectedCommune={selectedCommune}
+      setSelectedCommune={setSelectedCommune}
+      selectedCommuneName={selectedCommuneName}
+      topicWilaya={wilayaCode}
+      setSelectedCommuneName={setSelectedCommuneName}
+      communeCode={communeCode}
+      setCommuneCode={setCommuneCode}
     />
     </>
   );

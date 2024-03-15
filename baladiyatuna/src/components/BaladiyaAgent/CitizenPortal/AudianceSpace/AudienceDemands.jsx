@@ -14,7 +14,7 @@ import apiInstance from '../../../../../API';
 import Search from '../../../Tools/Search';
 import Filtering from '../../../Tools/Filtering';
 import NavigateButton from '../../../Tools/NavigationButton';
-
+import PrimaryColorText from '../../../Tools/Title';
 
 const AudienceDemands = () => {
   const { t } = useTranslation();
@@ -24,6 +24,9 @@ const AudienceDemands = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [
     { name: t('Tous les demandes'), value: 'Tous les demandes' },
     { name: t('En traitement'), value: 'en traitement' },
@@ -33,7 +36,7 @@ const AudienceDemands = () => {
 
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [filter, page, searchText, userData.commune]);
 
   const fetchData = async () => {
     try {
@@ -41,6 +44,7 @@ const AudienceDemands = () => {
         params: {
           page,
           state: filter === 'Tous les demandes' ? '' : filter,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
         },
       });
@@ -95,9 +99,9 @@ const AudienceDemands = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className='title'>
+          <PrimaryColorText className='title'>
             {t('Demandes audience')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

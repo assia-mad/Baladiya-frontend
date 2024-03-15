@@ -25,6 +25,8 @@ import Communes from '../Tools/Communes';
 import Wilayas from '../Tools/Wilayas';
 import algeriaCities from '../../../dzData.json';
 import SuccessSnackbar from '../Tools/SuccessSnackBar';
+import ErrorSnackbar from '../Tools/ErrorSnackBar'
+
 
 const getCommuneNameById = (communeId) => {
   const commune = algeriaCities.find((city) => city.id === communeId);
@@ -41,9 +43,10 @@ const Profile = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [imageChanged, setImageChanged] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
   const [selectedCommune, setSelectedCommune] = useState(null);
   const [selectedCommuneName, setSelectedCommuneName] = useState('');
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState('');
   const [communeCode, setCommuneCode] = useState('');
   const [wilayaCode, setWilayaCode] = useState('');
   const [user, setUser] = useState({
@@ -62,6 +65,9 @@ const Profile = () => {
   const [imageError, setImageError] = useState('');
   const [nonFieldError, setNonFieldError] = useState('');
   const [error, setError] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [isErrorOpen, setErrorOpen] = useState(false);
+
 
   const handleToastClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -101,17 +107,28 @@ const Profile = () => {
     formData.append('phone', user.phone);
     formData.append('wilaya', user.wilaya);
     formData.append('commune', communeCode);
-    if (imageFile) {
-      formData.append("image", imageFile);
+  
+    if (imageChanged && imageFile) {
+      formData.append('image', imageFile);
       console.log('theeeee sended file',imageFile);
     }
+    
 
     try {
-      await apiInstance.patch(`user/`, formData);
+      await apiInstance.patch(`user/`, formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       fetchUser();
       setSuccessOpen(true);
       setSuccessMsg(t('La modification a réussi!'));
     } catch (error) {
+      console.log(error.response);
+      const errorMessage = error.response?.message || t('Une erreur est apparue. SVP réessayez!');
+      setErrorMsg(errorMessage);
+      setErrorOpen(true);
       console.log(error.response);
       if (error.response) {
         const { data } = error.response;
@@ -136,9 +153,15 @@ const Profile = () => {
   };
 
   const handlePhotoChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setImageFile(selectedFile);
+    if (e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      setImageFile(selectedFile);
+      setImagePreview(URL.createObjectURL(selectedFile));
+      setImageChanged(true);
+    }
   };
+  
+  
 
   const handleSelectWilaya = (wilayaCode) => {
     setWilayaCode(wilayaCode);
@@ -157,6 +180,11 @@ const Profile = () => {
         onClose={handleToastClose}
         successMsg={successMsg}
       />
+      <ErrorSnackbar
+        open={isErrorOpen}
+        onClose={() => setErrorOpen(false)}
+        errorMsg={errorMsg}
+      />
       <Grid container direction='column' alignItems='center' spacing={2}>
         <Grid item>
           <Typography className='title' variant='h4'>
@@ -168,10 +196,11 @@ const Profile = () => {
             <Box display='flex' justifyContent='center' mt={2}>
               <CardMedia>
                 <Avatar
-                  alt='Profile Photo'
-                  src={imageFile || user.image} 
+                  alt={user.first_name}
+                  src={imagePreview || user.image} 
                   sx={{ width: 100, height: 100 }}
                 />
+
                 <label htmlFor='photo-upload'>
                   <input
                     type='file'

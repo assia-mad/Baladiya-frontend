@@ -19,6 +19,18 @@ const Historiques = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await apiInstance.get('user/');
+      setUserRole(response?.role);
+      setUserCommune(response?.commune);
+    } catch (error) {
+      console.log('Error fetching user role', error);
+    }
+  };
   const filterItemslist = [
     { name: t('Tous les historiques'), value: 'Tous les historiques' },
     { name: t('En traitement'), value: 'en traitement' },
@@ -32,20 +44,21 @@ const Historiques = () => {
         params: {
           page,
           state: filter === 'Tous les historiques' ? '' : filter,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           search: searchText,
         },
       });
       setHistoriques(response?.results);
-      console.log('hiiiiiiiiiiiiiiiistooooriquuuuuuues',response);
       setTotalPages(response?.total_pages);
     } catch (error) {
       console.log('Error fetching historiques', error);
     }
   };
+  
 
   useEffect(() => {
     fetchData();
-  }, [filter, page, searchText]);
+  }, [filter, page, searchText, userData.commune]);
 
 
 

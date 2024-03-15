@@ -6,12 +6,25 @@ import { useTranslation } from 'react-i18next';
 import apiInstance from '../../../../../../API';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import PrimaryColorText from '../../../../Tools/Title';
+import Wilayas from '../../../../Tools/Wilayas';
+import Communes from '../../../../Tools/Communes';
 
-const CreationStepDetails = ({ mode, handleChange, handleSave, creationStepData }) => {
+const CreationStepDetails = ({ mode,
+   handleChange,
+    handleSave,
+    creationStepData,
+    selectedCommune,
+    setSelectedCommune,
+    topicWilaya,
+    setCommuneCode,
+    communeCode,
+    setSelectedCommuneName, }) => {
   const [ownerName, setOwnerName] = useState('');
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
 
   const fetchOwnerName = async () => {
@@ -22,10 +35,19 @@ const CreationStepDetails = ({ mode, handleChange, handleSave, creationStepData 
       console.error('Error fetching owner name', error);
     }
   };
+  const fetchCurrentUser = async () => {
+    try{
+      const response = await apiInstance.get(`user/`);
+      setIsAdmin(response.role==='Admin');
+    } catch(error){
+
+    }
+};
   useEffect(() => {
     if (mode === 'update') {
       fetchOwnerName();
-    }
+    };
+    fetchCurrentUser();
   }, [mode, creationStepData.owner]);
 
   const handleRangChange = (value) => {
@@ -37,6 +59,15 @@ const CreationStepDetails = ({ mode, handleChange, handleSave, creationStepData 
     });
   };
 
+  const handleSelectWilaya = (wilayaCode) => {
+    setWilayaCode(wilayaCode);
+    setSelectedCommune(null); 
+  };
+
+  const handleSelectCommune = (id, name) => {
+    setCommuneCode(id);
+    setSelectedCommuneName(name);
+  };
   return (
     <Box
       display="flex"
@@ -73,6 +104,16 @@ const CreationStepDetails = ({ mode, handleChange, handleSave, creationStepData 
                 />
               </Grid>
             </>
+          )}
+          {isAdmin && (
+            <>
+          <Grid item xs={6}>
+              <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+          </Grid>
+          <Grid item xs={6}>
+            <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+          </Grid>
+          </>
           )}
           <Grid item xs={12} sm={6}>
             <TextField

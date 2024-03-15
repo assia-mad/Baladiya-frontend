@@ -9,6 +9,7 @@ import apiInstance from '../../../../../../API';
 import Search from '../../../../Tools/Search';
 import Filtering from '../../../../Tools/Filtering';
 import NavigateButton from '../../../../Tools/NavigationButton';
+import PrimaryColorText from '../../../../Tools/Title';
 
 const EconomicFormations = () => {
   const { t } = useTranslation();
@@ -18,6 +19,9 @@ const EconomicFormations = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState('');
   const [filter, setFilter] = useState("Tous les utilisateurs");
+  const userDataString = localStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+
   const filterItemslist = [ {name:t("Tous les utilisateurs"), value:"Tous les utilisateurs"},
                             {name:t("APC"), value:"Agent"},
                             {name:t("Admin"), value:"Admin"},
@@ -25,13 +29,14 @@ const EconomicFormations = () => {
 
   useEffect(() => {
     fetchData();
-  }, [page, searchText,filter]);
+  }, [page, searchText,filter, userData.commune]);
 
   const fetchData = async () => {
     try {
       const response = await apiInstance.get('formations/', {
         params: {
           page,
+          commune : userData.role === 'Admin' ? '' : userData.commune,
           type: 'Economique',
           owner__role : filter === "Tous les utilisateurs" ? '':filter,
           search: searchText,
@@ -73,7 +78,7 @@ const EconomicFormations = () => {
           <CheckCircle />
         </Avatar>
         <Grid item>
-          <Typography className="title">{t('Economique Formations')}</Typography>
+          <PrimaryColorText className="title">{t('Economique Formations')}</PrimaryColorText>
         </Grid>
         <Grid item>
           <Box display="flex" alignItems="center" mb={2}>

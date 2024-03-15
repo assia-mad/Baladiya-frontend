@@ -18,6 +18,11 @@ const EconomicFormationCreate = () => {
   const [isToastOpen, setToastOpen] = useState(false);
   const [isSuccessOpen, setSuccessOpen] = useState(false);
   const [successMsg, setsuccessMsg] = useState('');
+  const [selectedCommune, setSelectedCommune] = useState(null);
+  const [selectedCommuneName, setSelectedCommuneName] = useState('');
+  const [communeCode, setCommuneCode] = useState('');
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [currentUserCommune, setCurrentUSerCommune] = useState(false);
   const { t } = useTranslation();
 
   const handleToastClose = (event, reason) => {
@@ -32,13 +37,14 @@ const EconomicFormationCreate = () => {
   };
 
   useEffect(() => {
-    getCurrentUserId();
+    getCurrentUser();
   }, []);
 
-  const getCurrentUserId = async () => {
+  const getCurrentUser = async () => {
     try {
       const response = await apiInstance.get(`user/`);
       setUserId(response.id);
+      setCurrentUSerCommune(response.commune);
     } catch (error) {
       console.log(error);
       setErrorMsg(t('Echec de trouver owner ID'));
@@ -55,12 +61,14 @@ const EconomicFormationCreate = () => {
   };
 
   const handleCreate = async (selectedDate) => {
+    const parsedCommune = communeCode ? parseInt(communeCode, 10): parseInt(currentUserCommune,10);
     const data = {
       title: formation.title,
       description: formation.description,
       date: selectedDate.toISOString(),
       localisation: formation.localisation,
       owner: userId,
+      commune : parsedCommune,
       type: 'Economique',
       state:'validé',
     };
@@ -101,6 +109,12 @@ const EconomicFormationCreate = () => {
         handleChange={handleChange}
         handleCreate={handleCreate}
         modifiedFormation={formation}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
       />
     </>
   );

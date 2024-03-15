@@ -3,6 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LanguageProvider from './components/Tools/Languages/LanguageProvider';
 import LanguageContext from './components/Tools/Languages/LanguageContext';
+import { UserProvider } from './components/Tools/fetchCurrentUser';
 import Routers from './Routes';
 import Theme from '../theme';
 
@@ -25,9 +26,11 @@ const AppContent = () => {
 
   return (
     <ThemeProvider theme={themeWithDirection}>
+      <UserProvider>
       <div dir={direction}>
         <Routers />
       </div>
+      </UserProvider>
     </ThemeProvider>
   );
 }

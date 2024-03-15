@@ -18,6 +18,11 @@ const CreateTopic = () => {
     const [isSuccessOpen, setSuccessOpen] = useState(false);
     const [successMsg, setsuccessMsg] = useState('');
     const { t } = useTranslation();
+    const [selectedCommune, setSelectedCommune] = useState(null);
+    const [selectedCommuneName, setSelectedCommuneName] = useState('');
+    const [communeCode, setCommuneCode] = useState('');
+    const [wilayaCode, setWilayaCode] = useState(null);
+    const [currentUserCommune, setCurrentUSerCommune] = useState(null);
     
     const handleToastClose = (event, reason) => {
       if (reason === 'clickaway') {
@@ -29,13 +34,14 @@ const CreateTopic = () => {
       else { setSuccessOpen(false)}
     };
     useEffect(() => {
-      getCurrentUserId();
+      getCurrentUser();
     },[]);
 
-    const getCurrentUserId = async () => {
+    const getCurrentUser= async () => {
         try {
           const response = await apiInstance.get(`user/`);
           setUserId(response.id);
+          setCurrentUSerCommune(response.commune);
           console.log()
         }catch(error){
           console.log(error); 
@@ -51,11 +57,16 @@ const CreateTopic = () => {
       formData.append('title', topic.title);
       formData.append('description', topic.description);
       formData.append('type','Sportif');
+      const parsedCommune = communeCode? parseInt(communeCode, 10) : parseInt(currentUserCommune, 10) ;
+      formData.append("commune", parsedCommune);
+      console.log('the comuuuuune sent to update',parsedCommune);
       
       if (imageFile) {
         formData.append('image', imageFile);
       }
       
+        
+    
       try {
         const response = await apiInstance.post(`topics/`, formData, {
           headers: {
@@ -104,6 +115,12 @@ const CreateTopic = () => {
         handleCreate={handleCreate}
         handleImageUpload={handleImageUpload}
         modifiedTopic={topic}
+        selectedCommune={selectedCommune}
+        setSelectedCommune={setSelectedCommune}
+        setSelectedCommuneName={setSelectedCommuneName}
+        topicWilaya={wilayaCode}
+        communeCode={communeCode}
+        setCommuneCode={setCommuneCode}
         />
       </>
     );

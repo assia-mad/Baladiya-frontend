@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import apiInstance from '../../../../../../API';
 import StateMenuSelect from '../../../../Tools/StateMenu';
 import PrimaryColorText from '../../../../Tools/Title';
+import Wilayas from '../../../../Tools/Wilayas';
+import Communes from '../../../../Tools/Communes';
 
 const FormationDetails = ({
   mode,
@@ -14,15 +16,24 @@ const FormationDetails = ({
   handleCreate,
   handleUpdate,
   modifiedFormation,
+  selectedCommune,
+  setSelectedCommune,
+  topicWilaya,
+  setCommuneCode,
+  communeCode,
+  setSelectedCommuneName,
 }) => {
   const { t } = useTranslation();
   const [ownerName, setOwnerName] = useState('');
   const [date, setDate] = useState(mode === 'update' && modifiedFormation.date ? new Date(modifiedFormation.date) : new Date());
+  const [wilayaCode, setWilayaCode] = useState(null);
+  const [isAdmin,setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (mode === 'update' && modifiedFormation.owner) {
       fetchOwnerName();
     }
+    fetchCurrentUser();
   }, [mode, modifiedFormation.owner]);
 
   const fetchOwnerName = async () => {
@@ -32,6 +43,25 @@ const FormationDetails = ({
     } catch (error) {
       console.log('Error fetching owner name', error);
     }
+  };
+  
+  const fetchCurrentUser = async () => {
+        try{
+          const response = await apiInstance.get(`user/`);
+          setIsAdmin(response.role==='Admin');
+        } catch(error){
+
+        }
+  };
+
+  const handleSelectWilaya = (wilayaCode) => {
+    setWilayaCode(wilayaCode);
+    setSelectedCommune(null); 
+  };
+
+  const handleSelectCommune = (id, name) => {
+    setCommuneCode(id);
+    setSelectedCommuneName(name);
   };
 
   return (
@@ -60,6 +90,16 @@ const FormationDetails = ({
                 />
               </Grid>
             </>
+          )}
+          {isAdmin && (
+            <>
+          <Grid item xs={6}>
+              <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode ? wilayaCode : topicWilaya} />
+          </Grid>
+          <Grid item xs={6}>
+            <Communes selectedWilayaCode={wilayaCode ? wilayaCode : topicWilaya} selectedCommune={communeCode ? communeCode : selectedCommune} onSelectCommune={handleSelectCommune} />
+          </Grid>
+          </>
           )}
           <Grid item xs={12}>
             <TextField
