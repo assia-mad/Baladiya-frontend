@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8000/baladiya/';
+const API_URL = 'http://137.74.214.49/back/baladiya/';
 
 export const setToken = (token) => {
     sessionStorage.setItem('token',token);

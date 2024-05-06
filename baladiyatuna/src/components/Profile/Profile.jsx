@@ -25,7 +25,8 @@ import Communes from '../Tools/Communes';
 import Wilayas from '../Tools/Wilayas';
 import algeriaCities from '../../../dzData.json';
 import SuccessSnackbar from '../Tools/SuccessSnackBar';
-import ErrorSnackbar from '../Tools/ErrorSnackBar'
+import ErrorSnackbar from '../Tools/ErrorSnackBar';
+import PrimaryColorText from '../Tools/Title';
 
 
 const getCommuneNameById = (communeId) => {
@@ -36,6 +37,10 @@ const getCommuneNameById = (communeId) => {
 const getWilayaCodeByCommuneId = (communeId) => {
   const commune = algeriaCities.find((city) => city.id === communeId);
   return commune ? commune.wilaya_code : null;
+};
+const getWilayaByCommuneId = (communeId) => {
+  const commune = algeriaCities.find((city) => city.id === communeId);
+  return commune ? commune.wilaya_name_ascii : null;
 };
 
 const Profile = () => {
@@ -49,6 +54,7 @@ const Profile = () => {
   const [imageFile, setImageFile] = useState('');
   const [communeCode, setCommuneCode] = useState('');
   const [wilayaCode, setWilayaCode] = useState('');
+  const [wilaya, setWilaya]= useState('');
   const [user, setUser] = useState({
     first_name: '',
     last_name: '',
@@ -83,6 +89,8 @@ const Profile = () => {
       setCommuneCode(communeID);
       const wilayaCode = getWilayaCodeByCommuneId(communeID);
       const communeName = getCommuneNameById(communeID);
+      const wilaya = getWilayaByCommuneId(communeID);
+      setWilaya(wilaya);
       setSelectedCommune(communeName);
       setWilayaCode(wilayaCode);
       setUser(response);
@@ -185,11 +193,11 @@ const Profile = () => {
         onClose={() => setErrorOpen(false)}
         errorMsg={errorMsg}
       />
-      <Grid container direction='column' alignItems='center' spacing={2}>
-        <Grid item>
-          <Typography className='title' variant='h4'>
+      <Grid container direction='column' alignItems='center' spacing={4}>
+        <Grid item mt={4}>
+          <PrimaryColorText className="title">
             {t('Profile')}
-          </Typography>
+          </PrimaryColorText>
         </Grid>
         <Grid item mt={2}>
           <Card>
@@ -241,7 +249,7 @@ const Profile = () => {
                       helperText={lastNameError}
                     />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <TextField
                       label={t('Phone')}
                       name='phone' 
@@ -252,7 +260,8 @@ const Profile = () => {
                       helperText={phoneError}
                     />
                   </Grid>
-                  <Grid item xs={12}>
+                
+                  <Grid item xs={6}>
                     <TextField
                       label={t('Email')}
                       name='email'
@@ -263,12 +272,26 @@ const Profile = () => {
                       helperText={emailError}
                     />
                   </Grid>
+                  {user.role ==='Admin' &&
+                  <>
                   <Grid item xs={12} sm={6}>
-                    <Wilayas handleSelectWilaya={handleSelectWilaya} selectedCode={wilayaCode} />
+                    <TextField
+                        label={t('Wilaya')}
+                        name='wilaya'
+                        value={wilaya}
+                        sx={{width:'100%'}}
+                      />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Communes selectedWilayaCode={wilayaCode} selectedCommune={communeCode} onSelectCommune={handleSelectCommune} />
+                    <TextField
+                        label={t('Commune')}
+                        name='commune'
+                        value={selectedCommune}
+                        sx={{width:'100%'}}
+                      />
                   </Grid>
+                  </>
+                  }
                 </Grid>
                 <Box display='flex' justifyContent='center' mt={2}>
                   <Button variant='contained' color='primary' type='submit'>
